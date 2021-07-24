@@ -14,7 +14,15 @@ namespace Tile
         public void Setup(IndexPair index, Vector2 pos)
         {
             IndexPair = index;
-            renderObject.localPosition = new Vector3(pos.x, 0, pos.y);
+
+            var renderPos = new Vector3(pos.x, 0, pos.y);
+
+            if(index.y % 2 == 0)
+            {
+                renderPos.x -= 0.5f;
+            }
+
+            renderObject.localPosition = renderPos;
         }
     }
 }
