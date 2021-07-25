@@ -8,8 +8,9 @@ namespace Tile
     {
         public static readonly float SIZE = 2.0f;
 
-        [SerializeField]
-        private Transform renderObject;
+        [SerializeField] private Transform renderObject;
+        [SerializeField] private GameObject debugGameObject;
+        [SerializeField] private TextMesh debugIndexText;
 
         public IndexPair IndexPair { private set; get; }
 
@@ -25,6 +26,10 @@ namespace Tile
             }
 
             renderObject.localPosition = renderPos;
+
+#if UNITY_EDITOR
+            debugIndexText.text = $"({index.x}/{index.y})";
+#endif
         }
     }
 }

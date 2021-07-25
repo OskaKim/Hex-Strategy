@@ -310,7 +310,7 @@ GameObject:
   - component: {fileID: 1039916578}
   - component: {fileID: 1039916577}
   m_Layer: 0
-  m_Name: Creater
+  m_Name: TileCreater
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -328,6 +328,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fba221b662aa17f4aacee7f6ddeed429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tileRange:
+    x: 10
+    y: 10
   tilePrefab: {fileID: 6275563619957200588, guid: 02bebeb45bfc659468f3cd7ff0f57cbc, type: 3}
 --- !u!4 &1039916578
 Transform:
