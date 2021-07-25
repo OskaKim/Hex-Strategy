@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace Tile
 {
@@ -25,9 +26,24 @@ namespace Tile
             }
         }
 
-        private void Start()
+        private void ClearAll()
+        {
+            if (tiles.Count == 0) return;
+
+            tiles.Where(x => x != null)
+                .ToList()
+                .ForEach(x => Destroy(x.gameObject));
+
+            tiles.Clear();
+        }
+
+        private void OnEnable()
         {
             Create(tileRange);
+        }
+        private void OnDisable()
+        {
+            ClearAll();
         }
     }
 }
