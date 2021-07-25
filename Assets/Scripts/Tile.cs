@@ -6,7 +6,8 @@ namespace Tile
 {
     public class Tile : MonoBehaviour
     {
-        public static readonly float SIZE = 2.0f;
+        public static readonly float SIZE_X = 1.73f;
+        public static readonly float SIZE_Y = 1.50f;
 
         [SerializeField] private Transform renderObject;
         [SerializeField] private GameObject debugGameObject;
@@ -23,7 +24,7 @@ namespace Tile
 
             if (index.y % 2 == 0)
             {
-                renderPos.x -= SIZE / 2.0f;
+                renderPos.x -= SIZE_X / 2f;
             }
 
             renderObject.localPosition = renderPos;

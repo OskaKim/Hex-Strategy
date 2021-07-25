@@ -22,7 +22,7 @@ namespace Tile
                 {
                     var tile = Instantiate(tilePrefab);
                     var tile3DResource = Instantiate(tileResource[Random.Range(0, (int)TileType.NumTileType)]);
-                    tile.Setup(new IndexPair(x, y), new Vector2(x * Tile.SIZE, y * Tile.SIZE), tile3DResource.transform);
+                    tile.Setup(new IndexPair(x, y), new Vector2(x * Tile.SIZE_X, y * Tile.SIZE_Y), tile3DResource.transform);
                     tiles.Add(tile);
                 }
             }
