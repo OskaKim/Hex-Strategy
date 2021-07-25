@@ -6,6 +6,8 @@ namespace Tile
 {
     public class Tile : MonoBehaviour
     {
+        public static readonly float SIZE = 2.0f;
+
         [SerializeField]
         private Transform renderObject;
 
@@ -17,9 +19,9 @@ namespace Tile
 
             var renderPos = new Vector3(pos.x, 0, pos.y);
 
-            if(index.y % 2 == 0)
+            if (index.y % 2 == 0)
             {
-                renderPos.x -= 0.5f;
+                renderPos.x -= SIZE / 2.0f;
             }
 
             renderObject.localPosition = renderPos;

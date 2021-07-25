@@ -6,8 +6,8 @@ namespace Tile
 {
     public class TileCreater : MonoBehaviour
     {
-        [SerializeField]
-        private Tile tilePrefab;
+        [SerializeField] private IndexPair tileRange = new IndexPair(1, 1);
+        [SerializeField] private Tile tilePrefab;
         private readonly List<Tile> tiles = new List<Tile>();
 
         private void Create(IndexPair indexRange)
@@ -18,8 +18,8 @@ namespace Tile
             {
                 for (int x = 0; x < indexRange.x; ++x)
                 {
-                    var t = Instantiate<Tile>(tilePrefab);
-                    t.Setup(new IndexPair(x, y), new Vector2(x, y));
+                    var t = Instantiate(tilePrefab);
+                    t.Setup(new IndexPair(x, y), new Vector2(x * Tile.SIZE, y * Tile.SIZE));
                     tiles.Add(t);
                 }
             }
@@ -27,7 +27,7 @@ namespace Tile
 
         private void Start()
         {
-            Create(new IndexPair(10, 5));
+            Create(tileRange);
         }
     }
 }

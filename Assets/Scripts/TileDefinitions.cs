@@ -1,5 +1,8 @@
+using System;
+
 namespace Tile
 {
+    [Serializable]
     public struct IndexPair
     {
         public int x, y;
