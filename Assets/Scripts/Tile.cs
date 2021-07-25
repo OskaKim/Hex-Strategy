@@ -11,10 +11,11 @@ namespace Tile
         [SerializeField] private Transform renderObject;
         [SerializeField] private GameObject debugGameObject;
         [SerializeField] private TextMesh debugIndexText;
+        [SerializeField] private Transform resourceRoot;
 
         public IndexPair IndexPair { private set; get; }
 
-        public void Setup(IndexPair index, Vector2 pos)
+        public void Setup(IndexPair index, Vector2 pos, Transform addedTile3DResource)
         {
             IndexPair = index;
 
@@ -26,6 +27,9 @@ namespace Tile
             }
 
             renderObject.localPosition = renderPos;
+
+            addedTile3DResource.parent = resourceRoot;
+            addedTile3DResource.localPosition = Vector3.zero;
 
 #if UNITY_EDITOR
             debugIndexText.text = $"({index.x}/{index.y})";

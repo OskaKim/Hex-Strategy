@@ -13,4 +13,12 @@ namespace Tile
         }
     }
 
+    [Serializable]
+    public enum TileType 
+    {
+        Field,
+        Mountain,
+        Ocean,
+        NumTileType
+    }
 }
