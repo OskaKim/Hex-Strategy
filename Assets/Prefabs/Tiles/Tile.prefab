@@ -201,6 +201,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5257e0f602498e49b5580fa86ec05d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tileResource:
+  - {fileID: 919132149155446097, guid: 8256139771e47b04888394e1026aca67, type: 3}
+  - {fileID: 919132149155446097, guid: 7a9af6848b4047849baa9317d102b5be, type: 3}
+  - {fileID: 919132149155446097, guid: 5704e19c4789ff644b7fcd0069ea1434, type: 3}
   renderObject: {fileID: 1158255346847741173}
   debugGameObject: {fileID: 8228877697116129836}
   debugIndexText: {fileID: 3259444423942748194}
