@@ -9,7 +9,7 @@ namespace Tile
     {
         [SerializeField] private IndexPair tileRange = new IndexPair(1, 1);
         [SerializeField] private Tile tilePrefab;
-        [SerializeField] private GameObject[] tileResource = new GameObject[(int)TileType.NumTileType];
+        [SerializeField] private GameObject[] tileResource = new GameObject[(int)TerrainType.NumTerrainType];
         private readonly List<Tile> tiles = new List<Tile>();
 
         private void Create(IndexPair indexRange)
@@ -21,7 +21,7 @@ namespace Tile
                 for (int x = 0; x < indexRange.x; ++x)
                 {
                     var tile = Instantiate(tilePrefab);
-                    var tile3DResource = Instantiate(tileResource[Random.Range(0, (int)TileType.NumTileType)]);
+                    var tile3DResource = Instantiate(tileResource[Random.Range(0, (int)TerrainType.NumTerrainType)]);
                     tile.Setup(new IndexPair(x, y), new Vector2(x * Tile.SIZE_X, y * Tile.SIZE_Y), tile3DResource.transform);
                     tiles.Add(tile);
                 }
