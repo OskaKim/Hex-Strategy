@@ -21,4 +21,13 @@ namespace Tile
         Ocean,
         NumTileType
     }
+
+    [Serializable]
+    public enum ResourceType
+    {
+        Food,
+        ManPower,
+        Science,
+        Culture
+    }
 }
