@@ -31,9 +31,21 @@ namespace Tile
             renderObject.localPosition = renderPos;
 
 #if UNITY_EDITOR
-            debugIndexText.text = $"({index.x}/{index.y})";
+            DebugTextToIndex();
 #endif
         }
+
+#if UNITY_EDITOR
+        public void CustomDebugText(string text)
+        {
+            debugIndexText.text = text;
+        }
+
+        public void DebugTextToIndex()
+        {
+            debugIndexText.text = $"({IndexPair.x}/{IndexPair.y})";
+        }
+#endif
 
         private void attachResource(int terrainType, int featureType)
         {
