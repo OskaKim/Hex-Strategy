@@ -17,7 +17,7 @@ namespace Tile
 
         public IndexPair IndexPair { private set; get; }
 
-        public void Setup(IndexPair index, Vector2 pos, int terrainType, int featureType)
+        public void Setup(IndexPair index, Vector2 pos)
         {
             IndexPair = index;
 
@@ -29,7 +29,6 @@ namespace Tile
             }
 
             renderObject.localPosition = renderPos;
-            attachResource(terrainType, featureType);
 
 #if UNITY_EDITOR
             debugIndexText.text = $"({index.x}/{index.y})";

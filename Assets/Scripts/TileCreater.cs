@@ -20,11 +20,8 @@ namespace Tile
                 for (int x = 0; x < indexRange.x; ++x)
                 {
                     var tile = Instantiate(tilePrefab);
-                    // TODO : 랜덤이 아닌 룰에 따라 타입을 결정
-                    var terrainType = Random.Range(0, (int)TerrainType.NumTerrainType);
-                    var featureType = Random.Range(0, (int)FeatureType.NumFeatureType);
-
-                    tile.Setup(new IndexPair(x, y), new Vector2(x * Tile.SIZE_X, y * Tile.SIZE_Y), terrainType, featureType);
+                    
+                    tile.Setup(new IndexPair(x, y), new Vector2(x * Tile.SIZE_X, y * Tile.SIZE_Y));
                     tiles.Add(tile);
                 }
             }
