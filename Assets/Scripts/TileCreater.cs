@@ -27,6 +27,10 @@ namespace Tile
             }
         }
 
+        private Tile GetTile(IndexPair indexPair) {
+            return tiles.FirstOrDefault(x => x.IndexPair == indexPair);
+        }
+
         private void ClearAll()
         {
             if (tiles.Count == 0) return;

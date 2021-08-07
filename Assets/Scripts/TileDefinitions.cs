@@ -11,6 +11,11 @@ namespace Tile
             this.x = x;
             this.y = y;
         }
+
+        public static bool operator ==(IndexPair indexPair1, IndexPair indexPair2) =>
+            indexPair1.x == indexPair2.x && indexPair1.y == indexPair2.y;
+        public static bool operator !=(IndexPair indexPair1, IndexPair indexPair2) =>
+            indexPair1.x != indexPair2.x || indexPair1.y != indexPair2.y;
     }
 
     // NOTE : 기본지형.
