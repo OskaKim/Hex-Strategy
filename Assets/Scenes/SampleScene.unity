@@ -329,8 +329,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileRange:
-    x: 10
-    y: 10
+    x: 100
+    y: 100
   tilePrefab: {fileID: 6275563619957200588, guid: 02bebeb45bfc659468f3cd7ff0f57cbc, type: 3}
   tileResource:
   - {fileID: 919132149155446097, guid: 8256139771e47b04888394e1026aca67, type: 3}
