@@ -1,9 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using System.Linq;
 
 namespace Tile
 {
+    public class TileModel : MonoBehaviour
+    {
+        public static readonly List<Tile> tiles = new List<Tile>();
+
+        public static void ClearAll()
+        {
+            var tiles = TileModel.tiles;
+            if (tiles.Count == 0) return;
+
+            tiles.Where(x => x != null)
+                .ToList()
+                .ForEach(x => Destroy(x.gameObject));
+
+            tiles.Clear();
+        }
+    }
+
     public static class TileHelper
     {
         public static int maxIndexX { get; private set; }
@@ -23,7 +41,7 @@ namespace Tile
 
         public static Tile GetTile(IndexPair indexPair)
         {
-            return TileCreater.tiles.FirstOrDefault(x => x.IndexPair == indexPair);
+            return TileModel.tiles.FirstOrDefault(x => x.IndexPair == indexPair);
         }
 
         public static Tile[] GetNearTiles(Tile tile)
@@ -77,6 +95,10 @@ namespace Tile
 
         //    return size;
         //}
-
+        
+        public static void ClearAllTiles()
+        {
+            TileModel.ClearAll();
+        }
     }
 }

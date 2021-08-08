@@ -10,9 +10,6 @@ namespace Tile
         [SerializeField] private IndexPair tileRange = new IndexPair(1, 1);
         [SerializeField] private Tile tilePrefab;
 
-        // TODO : 타일 리스트를 어디에 두는게 좋을지
-        public static readonly List<Tile> tiles = new List<Tile>();
-
         private void Create(IndexPair indexRange)
         {
             TileHelper.maxIndex = new IndexPair(indexRange.x, indexRange.y);
@@ -24,7 +21,7 @@ namespace Tile
                     var tile = Instantiate(tilePrefab);
                     
                     tile.Setup(new IndexPair(x, y), new Vector2(x * Tile.SIZE_X, y * Tile.SIZE_Y));
-                    tiles.Add(tile);
+                    TileModel.tiles.Add(tile);
                 }
             }
         }
@@ -35,18 +32,8 @@ namespace Tile
         }
         private void OnDisable()
         {
-            ClearAll();
+            TileHelper.ClearAllTiles();
         }
 
-        private static void ClearAll()
-        {
-            if (tiles.Count == 0) return;
-
-            tiles.Where(x => x != null)
-                .ToList()
-                .ForEach(x => Destroy(x.gameObject));
-
-            tiles.Clear();
-        }
     }
 }
