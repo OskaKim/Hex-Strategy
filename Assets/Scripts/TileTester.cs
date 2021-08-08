@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
 
 namespace Tile
 {
@@ -11,11 +12,26 @@ namespace Tile
 
         private List<Tile> cacheTiles = new List<Tile>();
 
-        void Update()
+        private void Start()
         {
-            if(Input.GetKeyDown(KeyCode.F))
+            var clickStream = Observable.EveryUpdate()
+            .Where(_ => Input.GetMouseButtonDown(0))
+            .Subscribe(_ =>
             {
-                foreach(var cacheTile in cacheTiles) {
+                var clickedObject = InputHelper.GetGameObjectFromScreenPointToRay(Input.mousePosition);
+
+                if (clickedObject)
+                {
+                    Debug.Log(clickedObject.name);
+                }
+            });
+
+            var showNearTile = Observable.EveryUpdate()
+            .Where(_ => Input.GetKeyDown(KeyCode.F))
+            .Subscribe(_ =>
+            {
+                foreach (var cacheTile in cacheTiles)
+                {
                     cacheTile.DebugTextToIndex();
                 }
                 cacheTiles.Clear();
@@ -24,15 +40,13 @@ namespace Tile
                 tile.CustomDebugText("target");
                 cacheTiles.Add(tile);
 
-                Debug.Log("======================");
                 foreach (var nearTile in TileHelper.GetNearTiles(tile))
                 {
                     Debug.Log($"{nearTile.IndexPair.x} / {nearTile.IndexPair.y})");
                     nearTile.CustomDebugText("near tile");
                     cacheTiles.Add(nearTile);
                 }
-                Debug.Log("======================");
-            }
+            });
         }
     }
 }
