@@ -47,7 +47,7 @@ namespace Tile
         }
 #endif
 
-        private void attachResource(int terrainType, int featureType)
+        public void attachResource(int terrainType, int featureType)
         {
             // TODO : featureType까지 고려해서 리소스를 붙이도록 하기
             var tileResourceTransform = Instantiate(tileResource[terrainType]).transform;
