@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UniRx;
+using System;
 
 namespace Tile
 {
@@ -66,11 +67,14 @@ namespace Tile
         private List<Tile> CreateContinentTilePhase()
         {
             var continentTiles = new List<ContinentTile>();
-            int maxInfluence = 500;
-            int influence = maxInfluence;
+
+            // TODO : 맵 사이즈로부터 결정
+            int numOfContinentTiles = 500;
+            // NOTE : 대륙 영향력. 영향력이 높을수록 인접타일이 대륙일 확률이 높음
+            int influence = numOfContinentTiles;
 
             // 첫 대륙타일을 기준으로 대륙을 생성. 첫 대륙타일은 맵의 중앙
-            var firstContinentTile = new ContinentTile(TileHelper.GetTile(TileHelper.maxIndex / 2), influence);
+            var firstContinentTile = new ContinentTile(TileHelper.GetTile(TileHelper.maxIndex / 2), --influence);
             continentTiles.Add(firstContinentTile);
 
             bool isEnd = false;
@@ -88,8 +92,8 @@ namespace Tile
                         const int MIN_PERCENT = 10;
 
                         // NOTE : 대륙타일으로 바꿀지에 대한 확률
-                        int percent = Mathf.Clamp(influence / (maxInfluence / MAX_PERCENT), MIN_PERCENT, MAX_PERCENT);
-                        if (Random.Range(0, MAX_PERCENT) > percent) continue;
+                        int percent = Mathf.Clamp(influence / (numOfContinentTiles / MAX_PERCENT), MIN_PERCENT, MAX_PERCENT);
+                        if (UnityEngine.Random.Range(0, MAX_PERCENT) > percent) continue;
 
                         continentTiles.Add(new ContinentTile(nearTile, --influence));
                         if (influence <= 0)
@@ -99,9 +103,19 @@ namespace Tile
                         }
                     }
                 }
-
-                // TODO : 생성되지 않은 대륙 타일이 있을때 추가 생성
             }
+
+            // NOTE : 생성되지 않은 대륙 타일이 있을때 추가 생성
+            continentTiles
+                .SelectMany(x => TileHelper.GetNearTiles(x.tile))
+                .Distinct()
+                .Where(x => !continentTiles.Select(continentTile => continentTile.tile).Contains(x))
+                .OrderBy(g => Guid.NewGuid())
+                .Take(influence)
+                .All(x => {
+                    continentTiles.Add(new ContinentTile(x, --influence));
+                    return true;
+                });
 
 #if UNITY_EDITOR
             foreach (var tile in TileModel.tiles)
@@ -111,7 +125,6 @@ namespace Tile
 
             foreach (var continentTile in continentTiles)
             {
-                Debug.Log($"{continentTile.tile.IndexPair.x}, {continentTile.tile.IndexPair.y}");
                 continentTile.tile.CustomDebugText($"{continentTile.influence}");
             }
 #endif
