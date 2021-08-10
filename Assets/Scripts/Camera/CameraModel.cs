@@ -11,6 +11,8 @@ namespace MyCamera
         [SerializeField] private Vector3 followOffset = new Vector3(0, 0, 0);
 
         public Transform GetTarget() { return target; }
+        public void SetTarget(Transform target) { this.target = target; }
+        public void RemoveTarget() { this.target = null; }
         public float GetSmoothSpeed() { return smoothSpeed; }
         public Vector3 GetFollowOffset() { return followOffset; }
     }

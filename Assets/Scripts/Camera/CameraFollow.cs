@@ -5,7 +5,6 @@ using UniRx;
 
 namespace MyCamera
 {
-    [ExecuteInEditMode]
     public class CameraFollow : MonoBehaviour
     {
         [SerializeField] private CameraModel cameraModel;

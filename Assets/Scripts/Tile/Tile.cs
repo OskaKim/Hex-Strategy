@@ -53,6 +53,8 @@ namespace Tile
             var tileResourceTransform = Instantiate(tileResource[terrainType]).transform;
             tileResourceTransform.parent = resourceRoot;
             tileResourceTransform.localPosition = Vector3.zero;
+            tileResourceTransform.tag = tag;
+            tileResourceTransform.gameObject.AddComponent<MeshCollider>();
         }
     }
 }

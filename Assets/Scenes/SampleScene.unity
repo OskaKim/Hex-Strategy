@@ -155,6 +155,7 @@ MonoBehaviour:
   getIndex:
     x: 0
     y: 0
+  cameraModel: {fileID: 963194231}
 --- !u!4 &87238366
 Transform:
   m_ObjectHideFlags: 0

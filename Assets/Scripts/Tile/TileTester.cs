@@ -9,6 +9,7 @@ namespace Tile
     public class TileTester : MonoBehaviour
     {
         [SerializeField] IndexPair getIndex;
+        [SerializeField] MyCamera.CameraModel cameraModel;
 
         private List<Tile> cacheTiles = new List<Tile>();
 
@@ -20,9 +21,8 @@ namespace Tile
             {
                 var clickedObject = InputHelper.GetGameObjectFromScreenPointToRay(Input.mousePosition);
 
-                if (clickedObject)
-                {
-                    Debug.Log(clickedObject.name);
+                if (clickedObject) {
+                    cameraModel.SetTarget(clickedObject.transform);
                 }
             });
 
@@ -30,7 +30,7 @@ namespace Tile
             .Where(_ => Input.GetKeyDown(KeyCode.F))
             .Subscribe(_ =>
             {
-                foreach (var cacheTile in cacheTiles)
+                foreach (var cacheTile in cacheTiles)   
                 {
                     cacheTile.DebugTextToIndex();
                 }
