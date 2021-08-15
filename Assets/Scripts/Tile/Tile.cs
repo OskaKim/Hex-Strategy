@@ -9,7 +9,8 @@ namespace Tile
         public static readonly float SIZE_X = 1.73f;
         public static readonly float SIZE_Y = 1.50f;
 
-        [SerializeField] private GameObject[] tileResource = new GameObject[(int)TerrainType.NumTerrainType];
+        private static GameObject[] tileResources = new GameObject[(int)TerrainType.NumTerrainType];
+
         [SerializeField] private Transform renderObject;
         [SerializeField] private GameObject debugGameObject;
         [SerializeField] private TextMesh debugIndexText;
@@ -49,12 +50,31 @@ namespace Tile
 
         public void attachResource(int terrainType, int featureType)
         {
+            // NOTE : 리소스 로드
+            if(!tileResources[terrainType])
+            {
+                tileResources[terrainType] = Resources.Load<GameObject>(TileResourceInfo.TileResourcesPath[terrainType]);
+            }
+
             // TODO : featureType까지 고려해서 리소스를 붙이도록 하기
-            var tileResourceTransform = Instantiate(tileResource[terrainType]).transform;
+            var tileResourceTransform = Instantiate(tileResources[terrainType]).transform;
             tileResourceTransform.parent = resourceRoot;
             tileResourceTransform.localPosition = Vector3.zero;
             tileResourceTransform.tag = tag;
             tileResourceTransform.gameObject.AddComponent<MeshCollider>();
         }
+
+
+#if UNITY_EDITOR
+        public void attachResourceFromResourcePath(string path)
+        {
+            var tileResource = Resources.Load<GameObject>(path);
+            var tileResourceTransform = Instantiate(tileResource).transform;
+            tileResourceTransform.parent = resourceRoot;
+            tileResourceTransform.localPosition = Vector3.zero;
+            tileResourceTransform.tag = tag;
+            tileResourceTransform.gameObject.AddComponent<MeshCollider>();
+        }
+#endif
     }
 }

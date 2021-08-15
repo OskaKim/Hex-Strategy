@@ -61,4 +61,12 @@ namespace Tile
         Science,
         Culture
     }
+    struct TileResourceInfo
+    {
+        public static string[] TileResourcesPath = new string[(int)TerrainType.NumTerrainType] {
+            "Tile/hex_field",
+            "Tile/hex_mountain",
+            "Tile/hex_ocean"
+        };
+    }
 }
