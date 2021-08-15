@@ -6,14 +6,21 @@ using UnityEngine;
 public class SampleScene : MonoBehaviour
 {
     [SerializeField] Tile.Tile tilePrefab;
+    [SerializeField] List<string> tileNames;
+    [SerializeField] List<Tile.Tile> tiles;
+    [SerializeField] float offset = 3.0f;
 
     private void Start()
     {
+        var pos = new Vector3();
 
-    }
-
-    private void Update()
-    {
-        
+        foreach(var tileName in tileNames) {
+            var newTile = Instantiate(tilePrefab);
+            newTile.attachResourceFromResourcePath(tileName);
+            newTile.transform.position = pos;
+            pos += new Vector3(offset, 0);
+            newTile.CustomDebugText("");
+            tiles.Add(newTile);
+        }
     }
 }

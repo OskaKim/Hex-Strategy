@@ -63,5 +63,18 @@ namespace Tile
             tileResourceTransform.tag = tag;
             tileResourceTransform.gameObject.AddComponent<MeshCollider>();
         }
+
+
+#if UNITY_EDITOR
+        public void attachResourceFromResourcePath(string path)
+        {
+            var tileResource = Resources.Load<GameObject>(path);
+            var tileResourceTransform = Instantiate(tileResource).transform;
+            tileResourceTransform.parent = resourceRoot;
+            tileResourceTransform.localPosition = Vector3.zero;
+            tileResourceTransform.tag = tag;
+            tileResourceTransform.gameObject.AddComponent<MeshCollider>();
+        }
+#endif
     }
 }
