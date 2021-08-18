@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7decf71d60cb2fe438b4d9a0a160a517, type: 3}
+  m_Name: SceneLoaderManager
+  m_EditorClassIdentifier: 
+  sceneList:
+  - SceneName: LoadExample
+    SceneAsset: {fileID: 102900000, guid: 511f544c1ae32b3448425de6b65acff2, type: 3}
+    DisplayName: Scene Example Name
+    Description: Prompta noluisse verterem sed eu, mundi graece eum in. Vis ut alia
+      euismod tincidunt, per no ubique euismod. Indoctum qualisque vituperata an
+      his. Timeam feugait id mel, vis in iuvaret fabulas. Quis veri diceret vix in,
+      numquam praesent elaboraret eum ne.
+    SkipType: 0
+    LoadingType: 1
+    FakeLoadingTime: 7
+    Backgrounds:
+    - {fileID: 21300000, guid: 2650407d6311724489f3256696e75bb0, type: 3}
+    - {fileID: 21300000, guid: af238b260179c884b93aa3248768f90b, type: 3}
+    - {fileID: 21300000, guid: d693da8ebc165674b9509bab6391e358, type: 3}
+  tipsList:
+  - Create beautiful loading screens for improved your game
+  - Easy to use and implement
+  - 'Remember that have 3 diferent styles for select. '
+  - Create as many tips as you need
+  - Improved the look of your game with awasome backgrounds.
+  - Good backgrounds sounds increase the motivation of players.
