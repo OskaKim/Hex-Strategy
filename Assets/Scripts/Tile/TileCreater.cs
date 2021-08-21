@@ -9,9 +9,13 @@ namespace Tile
 {
     public class TileCreater : MonoBehaviour
     {
-        [SerializeField] private IndexPair tileRange = new IndexPair(1, 1);
+        [SerializeField] private IndexPair tileRange = new IndexPair(75, 50);
         [SerializeField] private Tile tilePrefab;
-
+        [SerializeField] private int numOfContinentTiles = 1000;             // NOTE : 대륙타일 사이즈 TODO : 맵 사이즈로부터 결정
+        [SerializeField] private float influenceOfContinent = 0.6f;          // NOTE : 대륙타일 사이즈 대비 영향력 지수(0 ~ 1)
+        [SerializeField] private int maxPercentToChangeToContinent = 70;     // NOTE : 대륙타일으로 바꿀지에 대한 최대 확률
+        [SerializeField] private int minPercentToChangeToContinent = 10;     // NOTE : 대륙타일으로 바꿀지에 대한 최소 확률
+        [SerializeField] private bool isCreateContinentTilesPerfect = false; // NOTE : 첫 생성시에 대륙타일이 전부 생성되지 않았다면 남은 수만큼 대륙 타일을 추가할 것인가
         private struct ContinentTile
         {
             public Tile tile;
@@ -25,15 +29,7 @@ namespace Tile
             }
         }
 
-        private void Start()
-        {
-            var clickStream = Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.R))
-            .Subscribe(_ =>
-                Create(tileRange));
-        }
-
-        private void Create(IndexPair indexRange)
+        public void Create(IndexPair indexRange)
         {
             TileHelper.ClearAllTiles();
             TileHelper.maxIndex = new IndexPair(indexRange.x, indexRange.y);
@@ -68,10 +64,8 @@ namespace Tile
         {
             var continentTiles = new List<ContinentTile>();
 
-            // TODO : 맵 사이즈로부터 결정
-            int numOfContinentTiles = 500;
             // NOTE : 대륙 영향력. 영향력이 높을수록 인접타일이 대륙일 확률이 높음
-            int influence = numOfContinentTiles;
+            int influence = (int)(numOfContinentTiles * influenceOfContinent);
 
             // 첫 대륙타일을 기준으로 대륙을 생성. 첫 대륙타일은 맵의 중앙
             var firstContinentTile = new ContinentTile(TileHelper.GetTile(TileHelper.maxIndex / 2), --influence);
@@ -88,14 +82,13 @@ namespace Tile
                 {
                     if (!continentTiles.Select(x => x.tile).Contains(nearTile))
                     {
-                        const int MAX_PERCENT = 100;
-                        const int MIN_PERCENT = 10;
-
                         // NOTE : 대륙타일으로 바꿀지에 대한 확률
-                        int percent = Mathf.Clamp(influence / (numOfContinentTiles / MAX_PERCENT), MIN_PERCENT, MAX_PERCENT);
-                        if (UnityEngine.Random.Range(0, MAX_PERCENT) > percent) continue;
+                        int percent = Mathf.Clamp(influence / (numOfContinentTiles / maxPercentToChangeToContinent), minPercentToChangeToContinent, maxPercentToChangeToContinent);
+                        if (UnityEngine.Random.Range(0, maxPercentToChangeToContinent) > percent) continue;
 
-                        continentTiles.Add(new ContinentTile(nearTile, --influence));
+                        var newContinentTile = nearTile;
+                        newContinentTile.ContinentInfluence = influence;
+                        continentTiles.Add(new ContinentTile(newContinentTile, --influence));
                         if (influence <= 0)
                         {
                             isEnd = true;
@@ -105,17 +98,22 @@ namespace Tile
                 }
             }
 
-            // NOTE : 생성되지 않은 대륙 타일이 있을때 추가 생성
-            continentTiles
-                .SelectMany(x => TileHelper.GetNearTiles(x.tile))
-                .Distinct()
-                .Where(x => !continentTiles.Select(continentTile => continentTile.tile).Contains(x))
-                .OrderBy(g => Guid.NewGuid())
-                .Take(influence)
-                .All(x => {
-                    continentTiles.Add(new ContinentTile(x, --influence));
-                    return true;
-                });
+            if (isCreateContinentTilesPerfect)
+            {
+                // NOTE : 생성되지 않은 대륙 타일이 있을때 추가 생성
+                continentTiles
+                    .SelectMany(x => TileHelper.GetNearTiles(x.tile))
+                    .Distinct()
+                    .Where(x => !continentTiles.Select(continentTile => continentTile.tile).Contains(x))
+                    .OrderBy(g => Guid.NewGuid())
+                    .Take(influence)
+                    .All(x =>
+                    {
+                        x.ContinentInfluence = influence;
+                        continentTiles.Add(new ContinentTile(x, --influence));
+                        return true;
+                    });
+            }
 
 #if UNITY_EDITOR
             foreach (var tile in TileModel.tiles)
@@ -132,10 +130,13 @@ namespace Tile
             return continentTiles.Select(x => x.tile).ToList();
         }
 
-        private void OnEnable()
+#if UNITY_EDITOR
+        public void CreateFromEditor()
         {
             Create(tileRange);
         }
+#endif
+
         private void OnDisable()
         {
             TileHelper.ClearAllTiles();
