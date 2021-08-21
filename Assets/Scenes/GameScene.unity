@@ -420,9 +420,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileRange:
-    x: 100
-    y: 100
+    x: 75
+    y: 50
   tilePrefab: {fileID: 6275563619957200588, guid: 02bebeb45bfc659468f3cd7ff0f57cbc, type: 3}
+  numOfContinentTiles: 1000
+  influenceOfContinent: 0.6
+  maxPercentToChangeToContinent: 70
+  minPercentToChangeToContinent: 10
+  isCreateContinentTilesPerfect: 0
 --- !u!4 &1039916578
 Transform:
   m_ObjectHideFlags: 0

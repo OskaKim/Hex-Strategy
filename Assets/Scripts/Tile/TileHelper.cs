@@ -16,8 +16,11 @@ namespace Tile
 
             tiles.Where(x => x != null)
                 .ToList()
+#if UNITY_EDITOR
+                .ForEach(x => DestroyImmediate(x.gameObject));
+#else
                 .ForEach(x => Destroy(x.gameObject));
-
+#endif
             tiles.Clear();
         }
     }
@@ -100,5 +103,14 @@ namespace Tile
         {
             TileModel.ClearAll();
         }
+
+#if UNITY_EDITOR
+        public static void ClearAllDebugText()
+        {
+            var tiles = TileModel.tiles;
+
+            tiles.ForEach(x => x.CustomDebugText(""));
+        }
+#endif
     }
 }
