@@ -16,16 +16,16 @@ namespace Tile
         private void Start()
         {
             // TODO : 타일 클릭 테스트
-            //var clickStream = Observable.EveryUpdate()
-            //.Where(_ => Input.GetMouseButtonDown(0))
-            //.Subscribe(_ =>
-            //{
-            //    var clickedObject = InputHelper.GetGameObjectFromScreenPointToRay(Input.mousePosition);
+            var clickStream = Observable.EveryUpdate()
+            .Where(_ => Input.GetMouseButtonDown(0))
+            .Subscribe(_ =>
+            {
+                var clickedObject = InputHelper.GetGameObjectFromScreenPointToRay(Input.mousePosition);
 
-            //    if (clickedObject) {
-            //        cameraModel.SetTarget(clickedObject.transform);
-            //    }
-            //});
+                if (clickedObject) {
+                    
+                }
+            });
 
             var showNearTile = Observable.EveryUpdate()
             .Where(_ => Input.GetKeyDown(KeyCode.F))
