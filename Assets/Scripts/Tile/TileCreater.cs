@@ -86,7 +86,9 @@ namespace Tile
                         int percent = Mathf.Clamp(influence / (numOfContinentTiles / maxPercentToChangeToContinent), minPercentToChangeToContinent, maxPercentToChangeToContinent);
                         if (UnityEngine.Random.Range(0, maxPercentToChangeToContinent) > percent) continue;
 
-                        continentTiles.Add(new ContinentTile(nearTile, --influence));
+                        var newContinentTile = nearTile;
+                        newContinentTile.ContinentInfluence = influence;
+                        continentTiles.Add(new ContinentTile(newContinentTile, --influence));
                         if (influence <= 0)
                         {
                             isEnd = true;
@@ -107,6 +109,7 @@ namespace Tile
                     .Take(influence)
                     .All(x =>
                     {
+                        x.ContinentInfluence = influence;
                         continentTiles.Add(new ContinentTile(x, --influence));
                         return true;
                     });

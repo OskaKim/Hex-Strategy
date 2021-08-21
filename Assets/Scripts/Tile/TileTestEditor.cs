@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
 
 namespace Tile
 {
@@ -9,22 +10,17 @@ namespace Tile
     [CanEditMultipleObjects]
     public class TileTestEditor : Editor
     {
-        TileTester tiletester;
-        SerializedProperty index;
-
-        private void OnEnable()
-        {
-            tiletester = (TileTester)target;
-
-            index = serializedObject.FindProperty("getIndex");
-        }
         public override void OnInspectorGUI()
         {
             if (GUILayout.Button("clear All Tile Debug Text")) TileHelper.ClearAllDebugText();
-
-            serializedObject.Update();
-            EditorGUILayout.PropertyField(index);
-            serializedObject.ApplyModifiedProperties();
+            if (GUILayout.Button("show tile continent influence"))
+            {
+                TileModel.tiles.Where(x => x.ContinentInfluence != 0).All(x =>
+                {
+                    x.CustomDebugText(x.ContinentInfluence.ToString());
+                    return true;
+                });
+            }
         }
     }
 }

@@ -16,6 +16,8 @@ namespace Tile
         [SerializeField] private TextMesh debugIndexText;
         [SerializeField] private Transform resourceRoot;
 
+        public int ContinentInfluence { get; set; }
+
         public IndexPair IndexPair { private set; get; }
 
         public void Setup(IndexPair index, Vector2 pos)
@@ -63,8 +65,7 @@ namespace Tile
             tileResourceTransform.tag = tag;
             tileResourceTransform.gameObject.AddComponent<MeshCollider>();
         }
-
-
+        
 #if UNITY_EDITOR
         public void attachResourceFromResourcePath(string path)
         {
