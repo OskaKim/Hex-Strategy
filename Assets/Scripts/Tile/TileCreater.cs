@@ -54,11 +54,11 @@ namespace Tile
             foreach(var tile in TileModel.tiles)
             {
                 if(continentTiles.Contains(tile)) {
-                    tile.attachResource((int)TerrainType.Field, 0);
+                    tile.setupType(TerrainType.Field, 0);
                     continue;
                 }
 
-                tile.attachResource((int)TerrainType.Ocean, 0);
+                tile.setupType(TerrainType.Ocean, 0);
             }
         }
 
