@@ -16,6 +16,7 @@ namespace Tile
         [SerializeField] private int maxPercentToChangeToContinent = 70;     // NOTE : 대륙타일으로 바꿀지에 대한 최대 확률
         [SerializeField] private int minPercentToChangeToContinent = 10;     // NOTE : 대륙타일으로 바꿀지에 대한 최소 확률
         [SerializeField] private bool isCreateContinentTilesPerfect = false; // NOTE : 첫 생성시에 대륙타일이 전부 생성되지 않았다면 남은 수만큼 대륙 타일을 추가할 것인가
+        private Transform tilesRoot = null;
         private struct ContinentTile
         {
             public Tile tile;
@@ -34,11 +35,13 @@ namespace Tile
             TileHelper.ClearAllTiles();
             TileHelper.maxIndex = new IndexPair(indexRange.x, indexRange.y);
 
+            if (tilesRoot == null) tilesRoot = new GameObject("tilesRoot").transform;
+
             for (int y = 0; y < indexRange.y; ++y)
             {
                 for (int x = 0; x < indexRange.x; ++x)
                 {
-                    var tile = Instantiate(tilePrefab);
+                    var tile = Instantiate(tilePrefab, tilesRoot);
                     
                     tile.Setup(new IndexPair(x, y), new Vector2(x * Tile.SIZE_X, y * Tile.SIZE_Y));
                     tile.name = $"{x},{y}";
@@ -51,11 +54,11 @@ namespace Tile
             foreach(var tile in TileModel.tiles)
             {
                 if(continentTiles.Contains(tile)) {
-                    tile.attachResource((int)TerrainType.Field, 0);
+                    tile.setupType(TerrainType.Field, 0);
                     continue;
                 }
 
-                tile.attachResource((int)TerrainType.Ocean, 0);
+                tile.setupType(TerrainType.Ocean, 0);
             }
         }
 

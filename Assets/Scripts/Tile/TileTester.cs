@@ -5,11 +5,13 @@ using UniRx;
 
 namespace Tile
 {
-    // TODO : 유니티 디버그 기능으로 확인할 수 있도록 개수
     public class TileTester : MonoBehaviour
     {
         [SerializeField] IndexPair getIndex;
         [SerializeField] MyCamera.CameraModel cameraModel;
+        [SerializeField] public IndexPair findPathStart;
+        [SerializeField] public IndexPair findPathEnd;
+        [SerializeField] public List<Tile> path;
 
         private List<Tile> cacheTiles = new List<Tile>();
 

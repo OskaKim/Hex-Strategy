@@ -15,6 +15,11 @@ namespace Tile
         [SerializeField] private GameObject debugGameObject;
         [SerializeField] private TextMesh debugIndexText;
         [SerializeField] private Transform resourceRoot;
+        [SerializeField] private bool isMovable = false;
+        [SerializeField] private int moveCost = 1;
+
+        public bool IsMovable { get { return isMovable; } }
+        public int MoveCost { get { return moveCost; } }
 
         public int ContinentInfluence { get; set; }
 
@@ -50,22 +55,44 @@ namespace Tile
         }
 #endif
 
-        public void attachResource(int terrainType, int featureType)
+        public void setupType(TerrainType terrainType, int featureType)
         {
+            setupMoveCost(terrainType);
+
+            int terrainTypeIndex = (int)terrainType;
+
             // NOTE : 리소스 로드
-            if(!tileResources[terrainType])
+            if(!tileResources[terrainTypeIndex])
             {
-                tileResources[terrainType] = Resources.Load<GameObject>(TileResourceInfo.TileResourcesPath[terrainType]);
+                tileResources[terrainTypeIndex] = Resources.Load<GameObject>(TileResourceInfo.TileResourcesPath[terrainTypeIndex]);
             }
 
             // TODO : featureType까지 고려해서 리소스를 붙이도록 하기
-            var tileResourceTransform = Instantiate(tileResources[terrainType]).transform;
+            var tileResourceTransform = Instantiate(tileResources[terrainTypeIndex]).transform;
             tileResourceTransform.parent = resourceRoot;
             tileResourceTransform.localPosition = Vector3.zero;
             tileResourceTransform.tag = tag;
             tileResourceTransform.gameObject.AddComponent<MeshCollider>();
         }
-        
+
+        private void setupMoveCost(TerrainType terrainType)
+        {
+            switch (terrainType)
+            {
+                case TerrainType.Field:
+                    moveCost = 1;
+                    break;
+                case TerrainType.Mountain:
+                    moveCost = 2;
+                    break;
+                default:
+                    moveCost = 0;
+                    break;
+            }
+
+            isMovable = moveCost != 0;
+        }
+
 #if UNITY_EDITOR
         public void attachResourceFromResourcePath(string path)
         {
