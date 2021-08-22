@@ -18,6 +18,9 @@ namespace Tile
         [SerializeField] private bool isMovable = false;
         [SerializeField] private int moveCost = 1;
 
+        public bool IsMovable { get { return isMovable; } }
+        public int MoveCost { get { return moveCost; } }
+
         public int ContinentInfluence { get; set; }
 
         public IndexPair IndexPair { private set; get; }
