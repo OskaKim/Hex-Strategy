@@ -17,11 +17,9 @@ namespace Tile
         {
             "tilePrefab",
             "tileRange",
-            "numOfContinentTiles",
+            "numOfMaxContinentTiles",
+            "numOfLeastContinentTiles",
             "influenceOfContinent",
-            "maxPercentToChangeToContinent",
-            "minPercentToChangeToContinent",
-            "isCreateContinentTilesPerfect",
         };
 
         private void OnEnable()
