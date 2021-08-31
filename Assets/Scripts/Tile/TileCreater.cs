@@ -46,14 +46,15 @@ namespace Tile
                 for (int x = 0; x < indexRange.x; x++)
                 {
                     var tile = Instantiate(tilePrefab, hexGrid.transform);
-                    TileModel.tiles.Add(tile);
-                    
                     // NOTE : 실제 위치 설정
                     var pos = tile.transform.localPosition = new Vector3(
                         (x + y * 0.5f - y / 2) * (HexMetrics.innerRadius * 2f),
                         0f,
                         y * (HexMetrics.outerRadius * 1.5f));
 
+                    tile.Setup(new IndexPair(x, y));
+                    TileModel.tiles.Add(tile);
+                    
                     // NOTE : 좌표계 설정
                     tile.coordinates = HexCoordinates.FromOffsetCoordinates(x, y);
                     tile.color = defaultColor;
@@ -63,24 +64,24 @@ namespace Tile
                     label.rectTransform.anchoredPosition = new Vector2(pos.x, pos.z);
                     label.text = tile.coordinates.ToStringOnSeparateLines();
                     TileModel.tileLabels.Add(label);
-
-                    CreateCell(x, y, i++);
                 }
             }
 
             Debug.Log(TileModel.tiles.Count);
 
-            // NOTE : 메쉬 생성
-            hexMesh.Triangulate();
-
             // TODO : 타일 환경설정은 새로운 좌표계에 맞춰서 리팩토링
 
             //// NOTE : 타일 생성 기준점
-            //var defaultPoint = TileHelper.maxIndex / 2;
+            var defaultPoint = TileHelper.maxIndex / 2;
             //// NOTE : 타일 생성 기준점을 매번 다르게 하기 위해 약간 조절
-            //var firstContinentTileIndex = defaultPoint;
+            var firstContinentTileIndex = defaultPoint;
 
-            //var continentTiles = CreateContinentTilePhase(firstContinentTileIndex);
+            var continentTiles = CreateContinentTilePhase(firstContinentTileIndex);
+
+            continentTiles.All(x => { x.color = Color.green; return x; });
+
+            // NOTE : 메쉬 생성
+            hexMesh.Triangulate();
 
             //foreach(var tile in TileModel.tiles)
             //{
@@ -91,10 +92,6 @@ namespace Tile
 
             //    tile.setupType(TerrainType.Ocean, 0);
             //}
-        }
-
-        void CreateCell(int x, int y, int i)
-        {
         }
 
         // NOTE : 대륙 타일 설정 페이즈

@@ -28,18 +28,9 @@ namespace Tile
 
         public IndexPair IndexPair { private set; get; }
 
-        public void Setup(IndexPair index, Vector2 pos)
+        public void Setup(IndexPair index)
         {
             IndexPair = index;
-
-            var renderPos = new Vector3(pos.x, 0, pos.y);
-
-            if (index.y % 2 == 0)
-            {
-                renderPos.x -= SIZE_X / 2f;
-            }
-
-            renderObject.localPosition = renderPos;
 
 #if UNITY_EDITOR
             DebugTextToIndex();
