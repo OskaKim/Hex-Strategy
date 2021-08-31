@@ -1,23 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Linq;
-using UniRx;
 using System;
 
 namespace Tile
 {
     public class TileCreater : MonoBehaviour
     {
-        [SerializeField] private IndexPair tileRange = new IndexPair(75, 50);
-        [SerializeField] private Tile tilePrefab;
+        [SerializeField] private IndexPair  tileRange = new IndexPair(75, 50);
+        [SerializeField] private Tile       tilePrefab;
+        [SerializeField] private HexGrid    hexGrid;
+        [SerializeField] private Canvas     gridCanvas;
+        [SerializeField] private Text       cellLabelPrefab;
+        [SerializeField] private HexMesh    hexMesh;
+        [SerializeField] private Color      defaultColor = Color.white;
+        [SerializeField] private Color      touchedColor = Color.magenta;
 
         // NOTE : 대륙타일 생성시 필요한 파라미터.
         [SerializeField] private int   numOfMaxContinentTiles = 1000;        // NOTE : 대륙타일 최대 사이즈. TODO : 맵 사이즈로부터 결정
         [SerializeField] private int   numOfLeastContinentTiles = 100;       // NOTE : 생성할 대륙타일의 최소 숫자. 이 숫자보다 적으면 추가 생성함. 대륙 타일의 최대 사이즈보다 커질 수 없음
         [SerializeField] private float influenceOfContinent = 0.6f;          // NOTE : 대륙타일 사이즈 대비 영향력 지수(0 ~ 1). 첫 타일의 영향력은 타일 사이즈 x 영향력 지수로 계산됨.
 
-        private Transform tilesRoot = null;
         private struct ContinentTile
         {
             public Tile tile;
@@ -36,36 +41,61 @@ namespace Tile
             TileHelper.ClearAllTiles();
             TileHelper.maxIndex = new IndexPair(indexRange.x, indexRange.y);
 
-            if (tilesRoot == null) tilesRoot = new GameObject("tilesRoot").transform;
-
-            for (int y = 0; y < indexRange.y; ++y)
+            for (int y = 0, i = 0; y < indexRange.y; y++)
             {
-                for (int x = 0; x < indexRange.x; ++x)
+                for (int x = 0; x < indexRange.x; x++)
                 {
-                    var tile = Instantiate(tilePrefab, tilesRoot);
-                    
-                    tile.Setup(new IndexPair(x, y), new Vector2(x * Tile.SIZE_X, y * Tile.SIZE_Y));
-                    tile.name = $"{x},{y}";
+                    var tile = Instantiate(tilePrefab, hexGrid.transform);
                     TileModel.tiles.Add(tile);
+                    
+                    // NOTE : 실제 위치 설정
+                    var pos = tile.transform.localPosition = new Vector3(
+                        (x + y * 0.5f - y / 2) * (HexMetrics.innerRadius * 2f),
+                        0f,
+                        y * (HexMetrics.outerRadius * 1.5f));
+
+                    // NOTE : 좌표계 설정
+                    tile.coordinates = HexCoordinates.FromOffsetCoordinates(x, y);
+                    tile.color = defaultColor;
+
+                    Text label = Instantiate<Text>(cellLabelPrefab);
+                    label.rectTransform.SetParent(gridCanvas.transform, false);
+                    label.rectTransform.anchoredPosition = new Vector2(pos.x, pos.z);
+                    label.text = tile.coordinates.ToStringOnSeparateLines();
+                    TileModel.tileLabels.Add(label);
+
+                    CreateCell(x, y, i++);
                 }
             }
 
-            // NOTE : 타일 생성 기준점
-            var defaultPoint = TileHelper.maxIndex / 2;
-            // NOTE : 타일 생성 기준점을 매번 다르게 하기 위해 약간 조절
-            var firstContinentTileIndex = defaultPoint;
+            Debug.Log(TileModel.tiles.Count);
 
-            var continentTiles = CreateContinentTilePhase(firstContinentTileIndex);
-            
-            foreach(var tile in TileModel.tiles)
-            {
-                if(continentTiles.Contains(tile)) {
-                    tile.setupType(TerrainType.Field, 0);
-                    continue;
-                }
+            // NOTE : 메쉬 생성
+            hexMesh.Triangulate(TileModel.tiles);
+            TileModel.hexMesh = hexMesh;
 
-                tile.setupType(TerrainType.Ocean, 0);
-            }
+            // TODO : 타일 환경설정은 새로운 좌표계에 맞춰서 리팩토링
+
+            //// NOTE : 타일 생성 기준점
+            //var defaultPoint = TileHelper.maxIndex / 2;
+            //// NOTE : 타일 생성 기준점을 매번 다르게 하기 위해 약간 조절
+            //var firstContinentTileIndex = defaultPoint;
+
+            //var continentTiles = CreateContinentTilePhase(firstContinentTileIndex);
+
+            //foreach(var tile in TileModel.tiles)
+            //{
+            //    if(continentTiles.Contains(tile)) {
+            //        tile.setupType(TerrainType.Field, 0);
+            //        continue;
+            //    }
+
+            //    tile.setupType(TerrainType.Ocean, 0);
+            //}
+        }
+
+        void CreateCell(int x, int y, int i)
+        {
         }
 
         // NOTE : 대륙 타일 설정 페이즈

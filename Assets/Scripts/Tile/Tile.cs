@@ -6,6 +6,9 @@ namespace Tile
 {
     public class Tile : MonoBehaviour
     {
+        public Color color;
+        public HexCoordinates coordinates;
+
         public static readonly float SIZE_X = 1.73f;
         public static readonly float SIZE_Y = 1.50f;
 

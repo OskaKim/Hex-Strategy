@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Linq;
 
 namespace Tile
@@ -8,7 +9,8 @@ namespace Tile
     public class TileModel : MonoBehaviour
     {
         public static readonly List<Tile> tiles = new List<Tile>();
-
+        public static readonly List<Text> tileLabels = new List<Text>();
+        public static HexMesh hexMesh;
         public static void ClearAll()
         {
             var tiles = TileModel.tiles;
@@ -22,6 +24,19 @@ namespace Tile
                 .ForEach(x => Destroy(x.gameObject));
 #endif
             tiles.Clear();
+
+            var tileLabels = TileModel.tileLabels;
+            if (tileLabels.Count == 0) return;
+
+            tileLabels.Where(x => x != null)
+                .ToList()
+#if UNITY_EDITOR
+                .ForEach(x => DestroyImmediate(x.gameObject));
+#else
+                .ForEach(x => Destroy(x.gameObject));
+#endif
+            tileLabels.Clear();
+            if (hexMesh != null) hexMesh.Clear();
         }
     }
 
