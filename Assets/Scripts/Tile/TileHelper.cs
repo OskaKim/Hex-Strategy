@@ -57,6 +57,11 @@ namespace Tile
             }
         }
 
+        public static Tile GetTile(HexCoordinates coordinates)
+        {
+            return TileModel.tiles.FirstOrDefault(x => x.coordinates == coordinates);
+        }
+
         public static Tile GetTile(IndexPair indexPair)
         {
             return TileModel.tiles.FirstOrDefault(x => x.IndexPair == indexPair);
@@ -64,35 +69,18 @@ namespace Tile
 
         public static Tile[] GetNearTiles(Tile tile)
         {
-            var x = tile.IndexPair.x;
-            var y = tile.IndexPair.y;
-            bool isEven = y % 2 == 0;
-
-            // NOTE : 육각타일의 특성상 홀수 짝수에서 인덱스가 달라지기 때문에 특수한 방식으로 타일을 습득
-            if (isEven)
-            {
-                return new Tile[]
-                {
-                    GetTile(new IndexPair(x - 1, y - 1)),
-                    GetTile(new IndexPair(x - 1, y)),
-                    GetTile(new IndexPair(x - 1, y + 1)),
-                    GetTile(new IndexPair(x, y - 1)),
-                    GetTile(new IndexPair(x, y + 1)),
-                    GetTile(new IndexPair(x + 1, y))
-                }
-                .Where(x => x != null).ToArray();
-            }
+            var x = tile.coordinates.X;
+            var z = tile.coordinates.Z;
 
             return new Tile[]
             {
-                GetTile(new IndexPair(x - 1, y)),
-                GetTile(new IndexPair(x, y - 1)),
-                GetTile(new IndexPair(x, y + 1)),
-                GetTile(new IndexPair(x + 1, y - 1)),
-                GetTile(new IndexPair(x + 1, y)),
-                GetTile(new IndexPair(x + 1, y + 1))
-            }
-            .Where(x => x != null).ToArray();
+               GetTile(new HexCoordinates(x,    z + 1)),
+               GetTile(new HexCoordinates(x,    z - 1)),
+               GetTile(new HexCoordinates(x - 1,z    )),
+               GetTile(new HexCoordinates(x - 1,z + 1)),
+               GetTile(new HexCoordinates(x + 1,z - 1)),
+               GetTile(new HexCoordinates(x + 1,z    )),
+            }.Where(x => x != null).ToArray();
         }
 
         // TODO : 필요 없을 수도 있는데 혹시 몰라서 주석처리

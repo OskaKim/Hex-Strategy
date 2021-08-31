@@ -71,8 +71,7 @@ namespace Tile
             Debug.Log(TileModel.tiles.Count);
 
             // NOTE : 메쉬 생성
-            hexMesh.Triangulate(TileModel.tiles);
-            TileModel.hexMesh = hexMesh;
+            hexMesh.Triangulate();
 
             // TODO : 타일 환경설정은 새로운 좌표계에 맞춰서 리팩토링
 

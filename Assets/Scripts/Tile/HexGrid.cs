@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 namespace Tile
 {
 	public class HexGrid : MonoBehaviour
@@ -35,34 +36,43 @@ namespace Tile
 				new Vector2(position.x, position.z);
 			label.text = cell.coordinates.ToStringOnSeparateLines();
 		}
-		
-		// TODO : 다른 클래스에서 터치 처리 정리하기
-		//void Update()
-		//{
-		//	if (Input.GetMouseButton(0))
-		//	{
-		//		HandleInput();
-		//	}
-		//}
 
-		//void HandleInput()
-		//{
-		//	Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-		//	RaycastHit hit;
-		//	if (Physics.Raycast(inputRay, out hit))
-		//	{
-		//		TouchCell(hit.point);
-		//	}
-		//}
-		//public void TouchCell(Vector3 position)
-		//{
-		//	position = transform.InverseTransformPoint(position);
-		//	HexCoordinates coordinates = HexCoordinates.FromPosition(position);
-		//	Debug.Log("touched at " + coordinates.ToString());
-		//	int index = coordinates.X + coordinates.Z * TileHelper.maxIndexY + coordinates.Z / 2;
-		//	Tile cell = cells[index];
-		//	cell.color = touchedColor;
-		//	hexMesh.Triangulate(cells);
-		//}
-	}
+        // TODO : 다른 클래스에서 터치 처리 정리하기
+        void Update()
+        {
+            if (Input.GetMouseButton(0))
+            {
+                HandleInput();
+            }
+        }
+
+        void HandleInput()
+        {
+            Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(inputRay, out hit))
+            {
+                TouchCell(hit.point);
+            }
+        }
+        public void TouchCell(Vector3 position)
+        {
+            position = transform.InverseTransformPoint(position);
+            HexCoordinates coordinates = HexCoordinates.FromPosition(position);
+            var clickedTile = TileHelper.GetTile(coordinates);
+            clickedTile.color = touchedColor;
+
+            TileHelper.GetNearTiles(clickedTile).All(x => {
+                x.color = Color.green;
+                return true;
+            });
+
+            TileModel.hexMesh.Triangulate();
+            //Debug.Log("touched at " + coordinates.ToString());
+            //int index = coordinates.X + coordinates.Z * TileHelper.maxIndexY + coordinates.Z / 2;
+            //Tile cell = cells[index];
+            //cell.color = touchedColor;
+            //hexMesh.Triangulate(cells);
+        }
+    }
 }

@@ -24,15 +24,14 @@ namespace Tile
 			colors = new List<Color>();
 		}
 
-		public void Triangulate(List<Tile> tiles)
+		public void Triangulate()
 		{
 			Clear();
-			if (hexMesh == null)
-			{
-				GetComponent<MeshFilter>().mesh = hexMesh = new Mesh();
-			}
 
-			foreach (var tile in tiles) { Triangulate(tile); }
+			if (hexMesh == null) GetComponent<MeshFilter>().mesh = hexMesh = new Mesh();
+			if (TileModel.hexMesh == null) TileModel.hexMesh = this;
+
+			foreach (var tile in TileModel.tiles) { Triangulate(tile); }
             hexMesh.vertices = vertices.ToArray();
 			hexMesh.triangles = triangles.ToArray();
 			hexMesh.colors = colors.ToArray();

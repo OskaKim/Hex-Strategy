@@ -1,41 +1,37 @@
 using UnityEngine;
+using System;
 
 [System.Serializable]
 public struct HexCoordinates
 {
-    [SerializeField]
-    private int x, z;
+    [SerializeField] private int x, z;
 
-    public int X
-    {
-        get
-        {
-            return x;
-        }
-    }
+    public int X { get { return x; } }
+    public int Y { get { return -X - Z; } }
+    public int Z { get { return z; } }
 
-    public int Z
-    {
-        get
-        {
-            return z;
-        }
-    }
-
-    public HexCoordinates(int x, int z)
-    {
+    public HexCoordinates(int x, int z) {
         this.x = x;
         this.z = z;
+    }
+
+    public static bool operator ==(HexCoordinates hexCoordinates1, HexCoordinates hexCoordinates2) =>
+        hexCoordinates1.X == hexCoordinates2.X && hexCoordinates1.Y == hexCoordinates2.Y && hexCoordinates1.Z == hexCoordinates2.Z;
+    public static bool operator !=(HexCoordinates hexCoordinates1, HexCoordinates hexCoordinates2) =>
+        hexCoordinates1.X != hexCoordinates2.X || hexCoordinates1.Y != hexCoordinates2.Y || hexCoordinates1.Z != hexCoordinates2.Z;
+
+    public static HexCoordinates operator /(HexCoordinates hexCoordinates1, HexCoordinates hexCoordinates2) {
+        if (hexCoordinates2.X == 0 || hexCoordinates2.Z == 0) throw new DivideByZeroException();
+        return new HexCoordinates(hexCoordinates1.X / hexCoordinates2.X, hexCoordinates1.Z / hexCoordinates2.Z);
+    }
+    public static HexCoordinates operator /(HexCoordinates hexCoordinates, int num) {
+        if (num == 0) throw new DivideByZeroException();
+        return new HexCoordinates(hexCoordinates.X / num, hexCoordinates.Y / num);
     }
 
     public static HexCoordinates FromOffsetCoordinates(int x, int z)
     {
         return new HexCoordinates(x - z / 2, z);
-    }
-    public int Y {
-        get {
-            return -X - Z;
-        }
     }
     public override string ToString()
     {
