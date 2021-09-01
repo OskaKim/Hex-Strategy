@@ -79,7 +79,7 @@ namespace Tile
 
             var continentTiles = CreateContinentTilePhase(firstContinentTileIndex);
 
-            continentTiles.All(x => { x.color = Color.green; return x; });
+            continentTiles.ForEach(x => x.color = Color.green);
 
             // NOTE : 메쉬 생성
             //hexMesh.Triangulate();

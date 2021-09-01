@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
 namespace Tile
 {
 	public class HexGrid : MonoBehaviour
@@ -62,17 +59,9 @@ namespace Tile
             var clickedTile = TileHelper.GetTile(coordinates);
             clickedTile.color = touchedColor;
 
-            TileHelper.GetNearTiles(clickedTile).All(x => {
-                x.color = Color.green;
-                return true;
-            });
+            TileHelper.GetNearTiles(clickedTile).ForEach(x => x.color = Color.green);
 
             TileModel.hexMesh.Triangulate();
-            //Debug.Log("touched at " + coordinates.ToString());
-            //int index = coordinates.X + coordinates.Z * TileHelper.maxIndexY + coordinates.Z / 2;
-            //Tile cell = cells[index];
-            //cell.color = touchedColor;
-            //hexMesh.Triangulate(cells);
         }
     }
 }

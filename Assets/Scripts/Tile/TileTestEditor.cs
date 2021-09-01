@@ -44,11 +44,7 @@ namespace Tile
             }
             if (GUILayout.Button("show tile index"))
             {
-                TileModel.tiles.All(x =>
-                {
-                    x.CustomDebugText($"{x.IndexPair.x}/{x.IndexPair.y}");
-                    return true;
-                });
+                TileModel.tiles.ForEach(x => x.CustomDebugText($"{x.IndexPair.x}/{x.IndexPair.y}"));
             }
             if (GUILayout.Button("path finding"))
             {
