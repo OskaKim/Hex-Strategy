@@ -77,7 +77,7 @@ public class PathFinding : MonoBehaviour
             // NOTE : 시작 노드에서 해당 노드까지의 실제 소요 경비값
             var g = parent.f + currentTile.MoveCost;
             // NOTE : 휴리스틱 수정 값.해당 노드에서 최종 목적지까지의 추정 값(거리)
-            var h = Mathf.Abs(destinationTile.IndexPair.x - currentTile.IndexPair.x) + Mathf.Abs(destinationTile.IndexPair.y - currentTile.IndexPair.y);
+            var h = Mathf.Abs(destinationTile.IndexPair.X - currentTile.IndexPair.X) + Mathf.Abs(destinationTile.IndexPair.Y - currentTile.IndexPair.Y);
             var f = g + h;
 
             // NOTE : close list에 있을 경우엔 open list에 추가 안함
@@ -114,41 +114,5 @@ public class PathFinding : MonoBehaviour
 
         openList.Remove(nextCloseNode);
         CloseListLoop(nextCloseNode);
-    }
-}
-
-// NOTE : LINQ확장
-// TODO : 적당한 파일로 옮기기
-public static class Linq
-{
-    public static IEnumerable<T> MinBy<T, U>(this IEnumerable<T> source, Func<T, U> selector)
-    {
-        return SelectBy(source, selector, (a, b) => Comparer<U>.Default.Compare(a, b) < 0);
-    }
-
-    public static IEnumerable<T> MaxBy<T, U>(this IEnumerable<T> source, Func<T, U> selector)
-    {
-        return SelectBy(source, selector, (a, b) => Comparer<U>.Default.Compare(a, b) > 0);
-    }
-
-    private static IEnumerable<T> SelectBy<T, U>(IEnumerable<T> source, Func<T, U> selector, Func<U, U, bool> comparer)
-    {
-        var list = new LinkedList<T>();
-        U prevKey = default(U);
-        foreach (var item in source)
-        {
-            var key = selector(item);
-            if (list.Count == 0 || comparer(key, prevKey))
-            {
-                list.Clear();
-                list.AddLast(item);
-                prevKey = key;
-            }
-            else if (Comparer<U>.Default.Compare(key, prevKey) == 0)
-            {
-                list.AddLast(item);
-            }
-        }
-        return list;
     }
 }

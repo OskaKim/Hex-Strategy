@@ -19,7 +19,6 @@ public class SampleScene : MonoBehaviour
             newTile.attachResourceFromResourcePath(tileName);
             newTile.transform.position = pos;
             pos += new Vector3(offset, 0);
-            newTile.CustomDebugText("");
             tiles.Add(newTile);
         }
     }

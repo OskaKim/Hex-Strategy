@@ -1,23 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Linq;
-using UniRx;
 using System;
 
 namespace Tile
 {
     public class TileCreater : MonoBehaviour
     {
-        [SerializeField] private IndexPair tileRange = new IndexPair(75, 50);
-        [SerializeField] private Tile tilePrefab;
+        [SerializeField] private Tile       tilePrefab;
+        [SerializeField] private IndexPair  tileRange = new IndexPair(75, 50);
+        [SerializeField] private Transform  tilesRoot;
+        [SerializeField] private HexMesh    hexMesh;
+        [SerializeField] private Canvas     gridCanvas;
+        [SerializeField] private Text       cellLabelPrefab;
+        [SerializeField] private Color      defaultColor = Color.white;
 
         // NOTE : 대륙타일 생성시 필요한 파라미터.
         [SerializeField] private int   numOfMaxContinentTiles = 1000;        // NOTE : 대륙타일 최대 사이즈. TODO : 맵 사이즈로부터 결정
         [SerializeField] private int   numOfLeastContinentTiles = 100;       // NOTE : 생성할 대륙타일의 최소 숫자. 이 숫자보다 적으면 추가 생성함. 대륙 타일의 최대 사이즈보다 커질 수 없음
         [SerializeField] private float influenceOfContinent = 0.6f;          // NOTE : 대륙타일 사이즈 대비 영향력 지수(0 ~ 1). 첫 타일의 영향력은 타일 사이즈 x 영향력 지수로 계산됨.
 
-        private Transform tilesRoot = null;
         private struct ContinentTile
         {
             public Tile tile;
@@ -34,38 +38,57 @@ namespace Tile
         public void Create(IndexPair indexRange)
         {
             TileHelper.ClearAllTiles();
-            TileHelper.maxIndex = new IndexPair(indexRange.x, indexRange.y);
+            TileHelper.maxIndex = new IndexPair(indexRange.X, indexRange.Y);
 
-            if (tilesRoot == null) tilesRoot = new GameObject("tilesRoot").transform;
-
-            for (int y = 0; y < indexRange.y; ++y)
+            for (int y = 0; y < indexRange.Y; y++)
             {
-                for (int x = 0; x < indexRange.x; ++x)
+                for (int x = 0; x < indexRange.X; x++)
                 {
                     var tile = Instantiate(tilePrefab, tilesRoot);
-                    
-                    tile.Setup(new IndexPair(x, y), new Vector2(x * Tile.SIZE_X, y * Tile.SIZE_Y));
-                    tile.name = $"{x},{y}";
+                    // NOTE : 실제 위치 설정
+                    var pos = tile.transform.localPosition = new Vector3(
+                        (x + y * 0.5f - y / 2) * (HexMetrics.innerRadius * 2f),
+                        0f,
+                        y * (HexMetrics.outerRadius * 1.5f));
+
+                    // NOTE : 좌표계 설정
+                    tile.Setup(new IndexPair(x, y));
+                    tile.color = defaultColor;
+
                     TileModel.tiles.Add(tile);
+
+                    // NOTE : 라벨 설정
+                    Text label = Instantiate<Text>(cellLabelPrefab);
+                    label.rectTransform.SetParent(gridCanvas.transform, false);
+                    label.rectTransform.anchoredPosition = new Vector2(pos.x, pos.z);
+                    label.text = tile.Coordinates.ToStringOnSeparateLines();
+                    label.tag = "TileUI";
+                    TileModel.tileLabels.Add(label);
                 }
             }
 
-            // NOTE : 타일 생성 기준점
+            Debug.Log(TileModel.tiles.Count);
+
+            // TODO : 타일 환경설정은 새로운 좌표계에 맞춰서 리팩토링
+
+            //// NOTE : 타일 생성 기준점
             var defaultPoint = TileHelper.maxIndex / 2;
-            // NOTE : 타일 생성 기준점을 매번 다르게 하기 위해 약간 조절
+            //// NOTE : 타일 생성 기준점을 매번 다르게 하기 위해 약간 조절
             var firstContinentTileIndex = defaultPoint;
 
             var continentTiles = CreateContinentTilePhase(firstContinentTileIndex);
-            
-            foreach(var tile in TileModel.tiles)
-            {
-                if(continentTiles.Contains(tile)) {
+
+            foreach (var tile in TileModel.tiles) {
+                if (continentTiles.Contains(tile)) {
                     tile.setupType(TerrainType.Field, 0);
                     continue;
                 }
 
                 tile.setupType(TerrainType.Ocean, 0);
             }
+
+            TileHelper.SetTilesColorToEnvironment();
+            TileHelper.ReDrawHexMesh();
         }
 
         // NOTE : 대륙 타일 설정 페이즈
@@ -79,25 +102,15 @@ namespace Tile
             // NOTE : 대륙 영향력. 영향력이 높을수록 인접타일이 대륙일 확률이 높음
             int influence = (int)(numOfMaxContinentTiles * Mathf.Clamp(influenceOfContinent, 0, 1));
 
-            // 첫 대륙타일을 기준으로 대륙을 생성.
+            // NOTE : 첫 대륙타일을 기준으로 대륙을 생성.
             var firstContinentTile = new ContinentTile(TileHelper.GetTile(firstContinentTileIndex), --influence / percentBasicUnit);
             continentTiles.Add(firstContinentTile);
 
+            // NOTE : 최소 생성 수를 넘을때까지 대륙 생성 알고리즘을 반복
             do {
                 CreateContinentTilesFromNearTiles(continentTiles, influence, percentBasicUnit);
             } while (Mathf.Clamp(numOfLeastContinentTiles, 0, numOfMaxContinentTiles) > continentTiles.Count);
 
-#if UNITY_EDITOR
-            foreach (var tile in TileModel.tiles)
-            {
-                tile.CustomDebugText("");
-            }
-
-            foreach (var continentTile in continentTiles)
-            {
-                continentTile.tile.CustomDebugText($"{continentTile.influence}");
-            }
-#endif
             Debug.Log($"{continentTiles.Count}continentTiles have created");
             return continentTiles.Select(x => x.tile).ToList();
         }

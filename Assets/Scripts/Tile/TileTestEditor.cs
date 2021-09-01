@@ -33,51 +33,12 @@ namespace Tile
 
         public override void OnInspectorGUI()
         {
-            if (GUILayout.Button("clear All Tile Debug Text")) TileHelper.ClearAllDebugText();
-            if (GUILayout.Button("show tile continent influence"))
-            {
-                TileModel.tiles.Where(x => x.ContinentInfluence != 0).All(x =>
-                {
-                    x.CustomDebugText(x.ContinentInfluence.ToString());
-                    return true;
-                });
-            }
-            if (GUILayout.Button("show tile index"))
-            {
-                TileModel.tiles.All(x =>
-                {
-                    x.CustomDebugText($"{x.IndexPair.x}/{x.IndexPair.y}");
-                    return true;
-                });
-            }
-            if (GUILayout.Button("path finding"))
-            {
-                TileHelper.ClearAllDebugText();
-
-                var startTile = TileHelper.GetTile(tileTester.findPathStart);
-                var endTile = TileHelper.GetTile(tileTester.findPathEnd);
-                tileTester.path = PathFinding.FindPath(startTile, endTile);
-
-                int count = 0;
-                Tile prevTile = null;
-                foreach (var tile in tileTester.path)
-                {
-                    if (prevTile)
-                    {
-                        tile.CustomDebugText($"{count += prevTile.MoveCost}");
-                    }
-                    else
-                    {
-                        tile.CustomDebugText($"{count}");
-                    }
-
-                    prevTile = tile;
-                }
+            if (GUILayout.Button("path finding")) {
+                tileTester.FindPath();
             }
 
             serializedObject.Update();
-            foreach (var property in serializeProperty)
-            {
+            foreach (var property in serializeProperty) {
                 EditorGUILayout.PropertyField(property);
             }
             serializedObject.ApplyModifiedProperties();

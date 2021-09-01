@@ -1,11 +1,16 @@
+using UnityEngine;
 using System;
 
 namespace Tile
 {
+    // NOTE : 타일 생성시의 x, y 인덱스를 가짐
     [Serializable]
     public struct IndexPair
     {
-        public int x, y;
+        [SerializeField] private int x, y;
+
+        public int X { get { return x; } }
+        public int Y { get { return y; } }
         public IndexPair(int x, int y)
         {
             this.x = x;
