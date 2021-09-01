@@ -16,6 +16,7 @@ namespace Tile
 
         public HexCoordinates Coordinates { private set; get; }
         public IndexPair IndexPair { private set; get; }
+        public TerrainType TerrainType { private set; get; }
         public bool IsMovable { get { return isMovable; } }
         public int MoveCost { get { return moveCost; } }
         public int ContinentInfluence { get; set; }
@@ -28,8 +29,8 @@ namespace Tile
 
         public void setupType(TerrainType terrainType, int featureType)
         {
+            TerrainType = terrainType;
             setupMoveCost(terrainType);
-
             int terrainTypeIndex = (int)terrainType;
 
             // NOTE : 리소스 로드
@@ -44,6 +45,7 @@ namespace Tile
             tileResourceTransform.localPosition = Vector3.zero;
         }
 
+        // TODO : 정의는 다른 클래스로 이동
         private void setupMoveCost(TerrainType terrainType)
         {
             switch (terrainType)

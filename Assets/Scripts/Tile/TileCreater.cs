@@ -78,11 +78,6 @@ namespace Tile
 
             var continentTiles = CreateContinentTilePhase(firstContinentTileIndex);
 
-            continentTiles.ForEach(x => x.color = Color.green);
-
-            // NOTE : 메쉬 생성
-            hexMesh.Triangulate();
-
             foreach (var tile in TileModel.tiles) {
                 if (continentTiles.Contains(tile)) {
                     tile.setupType(TerrainType.Field, 0);
@@ -91,6 +86,9 @@ namespace Tile
 
                 tile.setupType(TerrainType.Ocean, 0);
             }
+
+            TileHelper.SetTilesColorToEnvironment();
+            TileHelper.ReDrawHexMesh();
         }
 
         // NOTE : 대륙 타일 설정 페이즈

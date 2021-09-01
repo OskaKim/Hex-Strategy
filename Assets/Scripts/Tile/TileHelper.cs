@@ -15,7 +15,7 @@ namespace Tile {
             GameObjectUtility.ClearComponentListAndDelete(tileLabels);
             GameObjectUtility.DeleteGameObjectsFromTags(new string[] { "Tile", "TileUI" });
             if (hexMesh == null) hexMesh = FindObjectOfType<HexMesh>();
-            TileHelper.HideHexMesh();
+            TileHelper.ClearHexMesh();
         }
     }
 
@@ -58,13 +58,17 @@ namespace Tile {
             TileModel.ClearAll();
         }
 
-        public static void HideHexMesh() {
+        public static void ClearHexMesh() {
             if (!TileModel.hexMesh) return;
             TileModel.hexMesh.Clear();
         }
         public static void ReDrawHexMesh() {
             if (!TileModel.hexMesh) return;
             TileModel.hexMesh.Triangulate();
+        }
+
+        public static void SetTilesColorToEnvironment() {
+            TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetEnvironmentColor(x.TerrainType));
         }
     }
 }

@@ -33,24 +33,12 @@ namespace Tile
 
         public override void OnInspectorGUI()
         {
-            if (GUILayout.Button("path finding"))
-            {
-                var startTile = TileHelper.GetTile(tileTester.findPathStart);
-                var endTile = TileHelper.GetTile(tileTester.findPathEnd);
-                tileTester.path = PathFinding.FindPath(startTile, endTile);
-
-                float strengthPerPath = 1.0f / tileTester.path.Count;
-                int cnt = 0;
-                foreach (var path in tileTester.path) {
-                    path.color = new Color(strengthPerPath * ++cnt, 0, 0, 1);
-                }
-
-                TileHelper.ReDrawHexMesh();
+            if (GUILayout.Button("path finding")) {
+                tileTester.FindPath();
             }
 
             serializedObject.Update();
-            foreach (var property in serializeProperty)
-            {
+            foreach (var property in serializeProperty) {
                 EditorGUILayout.PropertyField(property);
             }
             serializedObject.ApplyModifiedProperties();
