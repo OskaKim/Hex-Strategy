@@ -9,8 +9,8 @@ namespace Tile
     {
         [SerializeField] IndexPair getIndex;
         [SerializeField] MyCamera.CameraModel cameraModel;
-        [SerializeField] public IndexPair findPathStart;
-        [SerializeField] public IndexPair findPathEnd;
+        [SerializeField] public HexCoordinates findPathStart;
+        [SerializeField] public HexCoordinates findPathEnd;
         [SerializeField] public List<Tile> path;
     }
 }

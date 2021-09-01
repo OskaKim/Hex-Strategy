@@ -38,6 +38,14 @@ namespace Tile
                 var startTile = TileHelper.GetTile(tileTester.findPathStart);
                 var endTile = TileHelper.GetTile(tileTester.findPathEnd);
                 tileTester.path = PathFinding.FindPath(startTile, endTile);
+
+                float strengthPerPath = 1.0f / tileTester.path.Count;
+                int cnt = 0;
+                foreach (var path in tileTester.path) {
+                    path.color = new Color(strengthPerPath * ++cnt, 0, 0, 1);
+                }
+
+                TileHelper.ReDrawHexMesh();
             }
 
             serializedObject.Update();
