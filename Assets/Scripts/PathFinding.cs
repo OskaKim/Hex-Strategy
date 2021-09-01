@@ -77,7 +77,7 @@ public class PathFinding : MonoBehaviour
             // NOTE : 시작 노드에서 해당 노드까지의 실제 소요 경비값
             var g = parent.f + currentTile.MoveCost;
             // NOTE : 휴리스틱 수정 값.해당 노드에서 최종 목적지까지의 추정 값(거리)
-            var h = Mathf.Abs(destinationTile.IndexPair.x - currentTile.IndexPair.x) + Mathf.Abs(destinationTile.IndexPair.y - currentTile.IndexPair.y);
+            var h = Mathf.Abs(destinationTile.IndexPair.X - currentTile.IndexPair.X) + Mathf.Abs(destinationTile.IndexPair.Y - currentTile.IndexPair.Y);
             var f = g + h;
 
             // NOTE : close list에 있을 경우엔 open list에 추가 안함

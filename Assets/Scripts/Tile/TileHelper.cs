@@ -34,14 +34,14 @@ namespace Tile
             }
             set
             {
-                maxIndexX = value.x;
-                maxIndexY = value.y;
+                maxIndexX = value.X;
+                maxIndexY = value.Y;
             }
         }
 
         public static Tile GetTile(HexCoordinates coordinates)
         {
-            return TileModel.tiles.FirstOrDefault(x => x.coordinates == coordinates);
+            return TileModel.tiles.FirstOrDefault(x => x.Coordinates == coordinates);
         }
 
         public static Tile GetTile(IndexPair indexPair)
@@ -51,8 +51,8 @@ namespace Tile
 
         public static Tile[] GetNearTiles(Tile tile)
         {
-            var x = tile.coordinates.X;
-            var z = tile.coordinates.Z;
+            var x = tile.Coordinates.X;
+            var z = tile.Coordinates.Z;
 
             return new Tile[]
             {
@@ -69,14 +69,5 @@ namespace Tile
         {
             TileModel.ClearAll();
         }
-
-#if UNITY_EDITOR
-        public static void ClearAllDebugText()
-        {
-            var tiles = TileModel.tiles;
-
-            tiles.ForEach(x => x.CustomDebugText(""));
-        }
-#endif
     }
 }

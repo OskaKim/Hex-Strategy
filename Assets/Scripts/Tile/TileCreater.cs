@@ -9,14 +9,13 @@ namespace Tile
 {
     public class TileCreater : MonoBehaviour
     {
-        [SerializeField] private IndexPair  tileRange = new IndexPair(75, 50);
         [SerializeField] private Tile       tilePrefab;
-        [SerializeField] private HexGrid    hexGrid;
+        [SerializeField] private IndexPair  tileRange = new IndexPair(75, 50);
+        [SerializeField] private Transform  tilesRoot;
+        [SerializeField] private HexMesh    hexMesh;
         [SerializeField] private Canvas     gridCanvas;
         [SerializeField] private Text       cellLabelPrefab;
-        [SerializeField] private HexMesh    hexMesh;
         [SerializeField] private Color      defaultColor = Color.white;
-        [SerializeField] private Color      touchedColor = Color.magenta;
 
         // NOTE : 대륙타일 생성시 필요한 파라미터.
         [SerializeField] private int   numOfMaxContinentTiles = 1000;        // NOTE : 대륙타일 최대 사이즈. TODO : 맵 사이즈로부터 결정
@@ -39,30 +38,30 @@ namespace Tile
         public void Create(IndexPair indexRange)
         {
             TileHelper.ClearAllTiles();
-            TileHelper.maxIndex = new IndexPair(indexRange.x, indexRange.y);
+            TileHelper.maxIndex = new IndexPair(indexRange.X, indexRange.Y);
 
-            for (int y = 0, i = 0; y < indexRange.y; y++)
+            for (int y = 0; y < indexRange.Y; y++)
             {
-                for (int x = 0; x < indexRange.x; x++)
+                for (int x = 0; x < indexRange.X; x++)
                 {
-                    var tile = Instantiate(tilePrefab, hexGrid.transform);
+                    var tile = Instantiate(tilePrefab, tilesRoot);
                     // NOTE : 실제 위치 설정
                     var pos = tile.transform.localPosition = new Vector3(
                         (x + y * 0.5f - y / 2) * (HexMetrics.innerRadius * 2f),
                         0f,
                         y * (HexMetrics.outerRadius * 1.5f));
 
-                    tile.Setup(new IndexPair(x, y));
-                    TileModel.tiles.Add(tile);
-                    
                     // NOTE : 좌표계 설정
-                    tile.coordinates = HexCoordinates.FromOffsetCoordinates(x, y);
+                    tile.Setup(new IndexPair(x, y));
                     tile.color = defaultColor;
 
+                    TileModel.tiles.Add(tile);
+
+                    // NOTE : 라벨 설정
                     Text label = Instantiate<Text>(cellLabelPrefab);
                     label.rectTransform.SetParent(gridCanvas.transform, false);
                     label.rectTransform.anchoredPosition = new Vector2(pos.x, pos.z);
-                    label.text = tile.coordinates.ToStringOnSeparateLines();
+                    label.text = tile.Coordinates.ToStringOnSeparateLines();
                     label.tag = "TileUI";
                     TileModel.tileLabels.Add(label);
                 }
@@ -82,7 +81,7 @@ namespace Tile
             continentTiles.ForEach(x => x.color = Color.green);
 
             // NOTE : 메쉬 생성
-            //hexMesh.Triangulate();
+            hexMesh.Triangulate();
 
             foreach (var tile in TileModel.tiles) {
                 if (continentTiles.Contains(tile)) {
@@ -105,25 +104,15 @@ namespace Tile
             // NOTE : 대륙 영향력. 영향력이 높을수록 인접타일이 대륙일 확률이 높음
             int influence = (int)(numOfMaxContinentTiles * Mathf.Clamp(influenceOfContinent, 0, 1));
 
-            // 첫 대륙타일을 기준으로 대륙을 생성.
+            // NOTE : 첫 대륙타일을 기준으로 대륙을 생성.
             var firstContinentTile = new ContinentTile(TileHelper.GetTile(firstContinentTileIndex), --influence / percentBasicUnit);
             continentTiles.Add(firstContinentTile);
 
+            // NOTE : 최소 생성 수를 넘을때까지 대륙 생성 알고리즘을 반복
             do {
                 CreateContinentTilesFromNearTiles(continentTiles, influence, percentBasicUnit);
             } while (Mathf.Clamp(numOfLeastContinentTiles, 0, numOfMaxContinentTiles) > continentTiles.Count);
 
-#if UNITY_EDITOR
-            foreach (var tile in TileModel.tiles)
-            {
-                tile.CustomDebugText("");
-            }
-
-            foreach (var continentTile in continentTiles)
-            {
-                continentTile.tile.CustomDebugText($"{continentTile.influence}");
-            }
-#endif
             Debug.Log($"{continentTiles.Count}continentTiles have created");
             return continentTiles.Select(x => x.tile).ToList();
         }

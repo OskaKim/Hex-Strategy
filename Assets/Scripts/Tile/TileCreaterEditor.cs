@@ -17,12 +17,11 @@ namespace Tile
         {
             "tilePrefab",
             "tileRange",
-            "hexGrid",
+            "tilesRoot",
             "hexMesh",
             "gridCanvas",
             "cellLabelPrefab",
             "defaultColor",
-            "touchedColor",
             "numOfMaxContinentTiles",
             "numOfLeastContinentTiles",
             "influenceOfContinent",
