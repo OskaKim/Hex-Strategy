@@ -63,6 +63,7 @@ namespace Tile
                     label.rectTransform.SetParent(gridCanvas.transform, false);
                     label.rectTransform.anchoredPosition = new Vector2(pos.x, pos.z);
                     label.text = tile.coordinates.ToStringOnSeparateLines();
+                    label.tag = "TileUI";
                     TileModel.tileLabels.Add(label);
                 }
             }

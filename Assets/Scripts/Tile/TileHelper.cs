@@ -11,31 +11,13 @@ namespace Tile
         public static readonly List<Tile> tiles = new List<Tile>();
         public static readonly List<Text> tileLabels = new List<Text>();
         public static HexMesh hexMesh;
+
         public static void ClearAll()
         {
-            var tiles = TileModel.tiles;
-            if (tiles.Count == 0) return;
-
-            tiles.Where(x => x != null)
-                .ToList()
-#if UNITY_EDITOR
-                .ForEach(x => DestroyImmediate(x.gameObject));
-#else
-                .ForEach(x => Destroy(x.gameObject));
-#endif
-            tiles.Clear();
-
-            var tileLabels = TileModel.tileLabels;
-            if (tileLabels.Count == 0) return;
-
-            tileLabels.Where(x => x != null)
-                .ToList()
-#if UNITY_EDITOR
-                .ForEach(x => DestroyImmediate(x.gameObject));
-#else
-                .ForEach(x => Destroy(x.gameObject));
-#endif
-            tileLabels.Clear();
+            GameObjectUtility.ClearComponentListAndDelete(tiles);
+            GameObjectUtility.ClearComponentListAndDelete(tileLabels);
+            GameObjectUtility.DeleteGameObjectsFromTags(new string[] { "Tile", "TileUI" });
+            if (hexMesh == null) hexMesh = FindObjectOfType<HexMesh>();
             if (hexMesh != null) hexMesh.Clear();
         }
     }
