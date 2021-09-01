@@ -82,17 +82,16 @@ namespace Tile
             continentTiles.All(x => { x.color = Color.green; return x; });
 
             // NOTE : 메쉬 생성
-            hexMesh.Triangulate();
+            //hexMesh.Triangulate();
 
-            //foreach(var tile in TileModel.tiles)
-            //{
-            //    if(continentTiles.Contains(tile)) {
-            //        tile.setupType(TerrainType.Field, 0);
-            //        continue;
-            //    }
+            foreach (var tile in TileModel.tiles) {
+                if (continentTiles.Contains(tile)) {
+                    tile.setupType(TerrainType.Field, 0);
+                    continue;
+                }
 
-            //    tile.setupType(TerrainType.Ocean, 0);
-            //}
+                tile.setupType(TerrainType.Ocean, 0);
+            }
         }
 
         // NOTE : 대륙 타일 설정 페이즈
