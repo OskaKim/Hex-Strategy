@@ -28,5 +28,16 @@ namespace Tile {
             if (num == 0) throw new DivideByZeroException();
             return new IndexPair(indexPair.x / num, indexPair.y / num);
         }
+
+        public override int GetHashCode() {
+            return GetHashCode();
+        }
+
+        public override bool Equals(object obj) {
+            if (obj == null || !(obj is IndexPair pair))
+                return false;
+            else
+                return this == pair;
+        }
     }
 }

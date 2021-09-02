@@ -16,6 +16,17 @@ namespace Tile {
             this.z = z;
         }
 
+        public override int GetHashCode() {
+            return GetHashCode();
+        }
+
+        public override bool Equals(object obj) {
+            if (obj == null || !(obj is HexCoordinates coordinates))
+                return false;
+            else
+                return this == coordinates;
+        }
+
         public static bool operator ==(HexCoordinates hexCoordinates1, HexCoordinates hexCoordinates2) =>
             hexCoordinates1.X == hexCoordinates2.X && hexCoordinates1.Y == hexCoordinates2.Y && hexCoordinates1.Z == hexCoordinates2.Z;
         public static bool operator !=(HexCoordinates hexCoordinates1, HexCoordinates hexCoordinates2) =>
