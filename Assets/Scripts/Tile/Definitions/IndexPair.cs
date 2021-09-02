@@ -30,7 +30,7 @@ namespace Tile {
         }
 
         public override int GetHashCode() {
-            return GetHashCode();
+            return x.GetHashCode() + y.GetHashCode();
         }
 
         public override bool Equals(object obj) {
