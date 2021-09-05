@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UniRx;
 
 namespace Tile
 {
@@ -7,12 +8,21 @@ namespace Tile
 	public class HexMesh : MonoBehaviour
 	{
 		[SerializeField] private Mesh hexMesh;
+		[SerializeField] private Material material;
 		[SerializeField] private MeshCollider meshCollider;
-		private List<Vector3> vertices = new List<Vector3>();
+
+		// NOTE : 알파는 메쉬 전체에 적용됨
+        public float MeshAlpha { set => material.SetFloat("_Alpha", value); }
+
+        private List<Vector3> vertices = new List<Vector3>();
 		private List<int> triangles = new List<int>();
 		private List<Color> colors = new List<Color>();
+		
+		private void Awake() {
+			material = GetComponent<Renderer>().sharedMaterial;
+		}
 
-		public void Clear()
+        public void Clear()
 		{
 			if (hexMesh != null)
 			{
