@@ -8,9 +8,11 @@ namespace Tile {
         public static TileInputHandler GetInstance() { return instance; }
         public event Action<int, Tile> ClickEvent;
 
-        void Start() {
+        private void Awake() {
             instance = this;
+        }
 
+        void Start() {
             Observable.EveryUpdate()
                 .Where(_ => Input.GetMouseButtonDown(0))
                 .Subscribe(_ => {

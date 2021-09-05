@@ -69,6 +69,7 @@ namespace Tile {
 
         public static void SetTilesColorToEnvironment() {
             TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetEnvironmentColor(x.TerrainType));
+            TileModel.hexMesh.MeshAlpha = TileColorDefinitions.GetEnvironmentAlpha();
         }
     }
 }
