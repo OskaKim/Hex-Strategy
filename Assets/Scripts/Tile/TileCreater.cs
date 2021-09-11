@@ -156,10 +156,8 @@ namespace Tile
                 if (currentTile.isClosed) continue;
                 currentTile.isClosed = true;
 
-                foreach (var nearTile in TileHelper.GetNearTiles(currentTile.tile))
-                {
-                    if (!continentTiles.Select(x => x.tile).Contains(nearTile))
-                    {
+                foreach (var nearTile in TileHelper.GetNearTiles(currentTile.tile)) {
+                    if (!continentTiles.Select(x => x.tile).Contains(nearTile) && !allContinentTiles.Any(x => x.Contains(nearTile))) {
                         // NOTE : 전체 타일 사이즈 대비 각 타일의 영향력으로 계산된 영향력 퍼센트
                         int influencePercent = influence / percentBasicUnit;
 
