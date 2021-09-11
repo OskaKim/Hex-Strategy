@@ -13,5 +13,17 @@ namespace Tile {
             new Color(0,1,0,1),
             new Color(0,0,0.8f,1),
         };
+        public static Color GetContinentColor(int continentType) {
+            if (continentType == -1) return new Color(0, 0, 0, 1);
+            return continentColor[continentType];
+        }
+        private static Color[] continentColor = {
+            new Color(1,0,0,1),
+            new Color(0,1,0,1),
+            new Color(0,0,1,1),
+            new Color(1,1,0,1),
+            new Color(0,1,1,1),
+            new Color(1,1,1,1),
+        };
     }
 }

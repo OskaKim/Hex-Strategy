@@ -17,6 +17,8 @@ namespace Tile
         public HexCoordinates Coordinates { private set; get; }
         public IndexPair IndexPair { private set; get; }
         public TerrainType TerrainType { private set; get; }
+        public int ContinentType { set => continentType = value; get => continentType; }
+        private int continentType = -1;
         public bool IsMovable { get { return isMovable; } }
         public int MoveCost { get { return moveCost; } }
         public int ContinentInfluence { get; set; }

@@ -71,5 +71,9 @@ namespace Tile {
             TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetEnvironmentColor(x.TerrainType));
             TileModel.hexMesh.MeshAlpha = TileColorDefinitions.GetEnvironmentAlpha();
         }
+
+        public static void SetTilesColorToContinent() {
+            TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetContinentColor(x.ContinentType));
+        }
     }
 }
