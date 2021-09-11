@@ -9,13 +9,14 @@ namespace Tile
 {
     public class TileCreater : MonoBehaviour
     {
-        [SerializeField] private Tile       tilePrefab;
-        [SerializeField] private IndexPair  tileRange = new IndexPair(75, 50);
-        [SerializeField] private Transform  tilesRoot;
-        [SerializeField] private HexMesh    hexMesh;
-        [SerializeField] private Canvas     gridCanvas;
-        [SerializeField] private Text       cellLabelPrefab;
-        [SerializeField] private Color      defaultColor = Color.white;
+        [SerializeField] private Tile        tilePrefab;
+        [SerializeField] private IndexPair   tileRange = new IndexPair(75, 50);
+        [SerializeField] private Transform   tilesRoot;
+        [SerializeField] private HexMesh     hexMesh;
+        [SerializeField] private Canvas      gridCanvas;
+        [SerializeField] private Text        cellLabelPrefab;
+        [SerializeField] private Color       defaultColor = Color.white;
+        [SerializeField] private IndexPair[] firstContinentTileIndexs;
 
         // NOTE : 대륙타일 생성시 필요한 파라미터.
         [SerializeField] private int   numOfMaxContinentTiles = 1000;        // NOTE : 대륙타일 최대 사이즈. TODO : 맵 사이즈로부터 결정
@@ -74,16 +75,13 @@ namespace Tile
 
             // TODO : 타일 환경설정은 새로운 좌표계에 맞춰서 리팩토링
 
-            //// NOTE : 타일 생성 기준점
-            var defaultPoint = TileHelper.maxIndex / 2;
-            //// NOTE : 타일 생성 기준점을 매번 다르게 하기 위해 약간 조절
-            var firstContinentTileIndex = defaultPoint;
-
             for(int i = 0; i < allContinentTiles.Length; ++i) {
                 allContinentTiles[i] = new List<Tile>();
             }
 
-            CreateRandomContinent(firstContinentTileIndex);
+            foreach (var firstContinentTileIndex in firstContinentTileIndexs) {
+                CreateRandomContinent(firstContinentTileIndex);
+            }
 
             foreach (var tile in TileModel.tiles) {
                 if (allContinentTiles.Any(x => x.Contains(tile))) {
@@ -94,7 +92,8 @@ namespace Tile
                 tile.setupType(TerrainType.Ocean, 0);
             }
 
-            TileHelper.SetTilesColorToEnvironment();
+            //TileHelper.SetTilesColorToEnvironment();
+            TileHelper.SetTilesColorToContinent();
             TileHelper.ReDrawHexMesh();
 
             for(int i = 0; i < allContinentTiles.Length; ++i) {
@@ -115,9 +114,10 @@ namespace Tile
             // TODO : 무한 루프를 가능한 없애고 싶으므로 더 좋은 방법이 생각나면 변경
             // NOTE : 아직 설정이 안된 대륙 타일 중 하나를 설정
             while (true) {
-                int randomIndex = UnityEngine.Random.Range(0, allContinentTiles.Length);
-                if(allContinentTiles[randomIndex].Count == 0) {
-                    CreateContinentTilePhase(firstContinentTileIndex, ref allContinentTiles[randomIndex]);
+                int continentType = UnityEngine.Random.Range(0, allContinentTiles.Length);
+                if(allContinentTiles[continentType].Count == 0) {
+                    CreateContinentTilePhase(firstContinentTileIndex, ref allContinentTiles[continentType]);
+                    allContinentTiles[continentType].ForEach(x => x.ContinentType = continentType);
                     return;
                 }
             }

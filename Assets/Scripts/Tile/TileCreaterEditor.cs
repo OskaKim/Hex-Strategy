@@ -25,6 +25,7 @@ namespace Tile
             "numOfMaxContinentTiles",
             "numOfLeastContinentTiles",
             "influenceOfContinent",
+            "firstContinentTileIndexs"
         };
 
         private void OnEnable()
