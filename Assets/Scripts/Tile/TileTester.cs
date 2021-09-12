@@ -32,7 +32,11 @@ namespace Tile
 
             var startTile = TileHelper.GetTile(findPathStart);
             var endTile = TileHelper.GetTile(findPathEnd);
-            path = PathFinding.FindPath(startTile, endTile);
+
+
+            var pathFinder = PathFinderManager.GetNewPathFinder();
+            path = pathFinder.FindPath(startTile, endTile);
+            PathFinderManager.DeletePathFinder(pathFinder);
 
             TileHelper.SetTilesColorToEnvironment();
 

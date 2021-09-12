@@ -6,7 +6,22 @@ using System.Linq;
 using UniRx;
 using System;
 
-public class PathFinding : MonoBehaviour
+public class PathFinderManager {
+    public static List<PathFinder> pathFinders = new List<PathFinder>();
+
+    public static PathFinder GetNewPathFinder() {
+        PathFinder newPathFinder = new PathFinder();
+        pathFinders.Add(newPathFinder);
+        return newPathFinder;
+    }
+
+    public static void DeletePathFinder(PathFinder pathFinder) {
+        pathFinders.Remove(pathFinder);
+        Debug.Log(pathFinders.Count);
+    }
+}
+
+public class PathFinder : MonoBehaviour
 {
     private class Node
     {
@@ -22,16 +37,16 @@ public class PathFinding : MonoBehaviour
     }
 
     //NOTE : 최단 경로를 분석하기 위한 상태값들이 계속 갱신
-    private static List<Node> openList = new List<Node>();
+    private List<Node> openList = new List<Node>();
     //NOTE : 처리가 완료된 노드를 담아둠
-    private static List<Node> closeList = new List<Node>();
-    private static Node destinationNode;
-    private static Tile.Tile destinationTile;
-    private static int calculCount = 0;
+    private List<Node> closeList = new List<Node>();
+    private Node destinationNode;
+    private Tile.Tile destinationTile;
+    private int calculCount = 0;
     // NOTE : 연산 최대 수. 이를 넘어가면 경로탐색 실패로 간주함
     private readonly static int MaxCalculCount = 1500;
 
-    public static List<Tile.Tile> FindPath(Tile.Tile startTile, Tile.Tile destinationTile)
+    public List<Tile.Tile> FindPath(Tile.Tile startTile, Tile.Tile destinationTile)
     {
         if (startTile == destinationTile || !startTile.IsMovable || !destinationTile.IsMovable) return new List<Tile.Tile>();
 
@@ -41,7 +56,7 @@ public class PathFinding : MonoBehaviour
         calculCount = 0;
 
         var currentCloseNode = new Node(startTile, null, 0);
-        PathFinding.destinationTile = destinationTile;
+        this.destinationTile = destinationTile;
         CloseListLoop(currentCloseNode);
 
         List<Tile.Tile> path = new List<Tile.Tile>();
@@ -51,7 +66,7 @@ public class PathFinding : MonoBehaviour
         return path;
     }
 
-    private static void AddToPath(List<Tile.Tile> path, Node node)
+    private void AddToPath(List<Tile.Tile> path, Node node)
     {
         if (node == null) return;
 
@@ -63,7 +78,7 @@ public class PathFinding : MonoBehaviour
         path.Add(node.tile);
     }
 
-    private static void CloseListLoop(Node currentCloseNode)
+    private void CloseListLoop(Node currentCloseNode)
     {
         closeList.Add(currentCloseNode);
 
