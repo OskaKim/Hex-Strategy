@@ -33,19 +33,17 @@ namespace Tile
             var startTile = TileHelper.GetTile(findPathStart);
             var endTile = TileHelper.GetTile(findPathEnd);
 
+            PathFinderManager.StartPathFinding(startTile, endTile, (outPath) => {
+                path = outPath;
+                TileHelper.SetTilesColorToEnvironment();
 
-            var pathFinder = PathFinderManager.GetNewPathFinder();
-            path = pathFinder.FindPath(startTile, endTile);
-            PathFinderManager.DeletePathFinder(pathFinder);
-
-            TileHelper.SetTilesColorToEnvironment();
-
-            float strengthPerPath = 1.0f / path.Count;
-            int cnt = 0;
-            foreach (var path in path) {
-                path.color = new Color(strengthPerPath * ++cnt, 0, 0, 1);
-            }
-            TileHelper.ReDrawHexMesh();
+                float strengthPerPath = 1.0f / outPath.Count;
+                int cnt = 0;
+                foreach (var path in path) {
+                    path.color = new Color(strengthPerPath * ++cnt, 0, 0, 1);
+                }
+                TileHelper.ReDrawHexMesh();
+            });
         }
     }
 }
