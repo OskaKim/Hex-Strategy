@@ -15,17 +15,24 @@ public class PathFinderManager : MonoBehaviour {
         }
         return instance;
     }
-    private static List<PathFinder> pathFinders = new List<PathFinder>();
+    
+    private readonly List<PathFinder> workingPathFinders = new List<PathFinder>();
 
-    private static PathFinder GetNewPathFinder() {
+    private PathFinder GetNewPathFinder() {
         PathFinder newPathFinder = new PathFinder();
-        pathFinders.Add(newPathFinder);
+        workingPathFinders.Add(newPathFinder);
         return newPathFinder;
     }
 
-    private static void DeletePathFinder(PathFinder pathFinder) {
-        pathFinders.Remove(pathFinder);
-        Debug.Log(pathFinders.Count);
+    private void DeletePathFinder(PathFinder pathFinder) {
+        workingPathFinders.Remove(pathFinder);
+        Debug.Log(workingPathFinders.Count);
+    }
+
+    private bool isExistSamePathFinder(Tile.Tile startTile, Tile.Tile destinationTile) {
+        return workingPathFinders.Any(x => {
+            return x.StartTile == startTile && x.DestinationTile == destinationTile;
+        });
     }
 
     private IEnumerator PathFindCoroutine(Tile.Tile startTile, Tile.Tile destinationTile, Action<List<Tile.Tile>> callback) {
@@ -44,7 +51,15 @@ public class PathFinderManager : MonoBehaviour {
 
     // NOTE : 새로운 패스 파인더로 패스 파인딩 개시
     public static void StartPathFinding(Tile.Tile startTile, Tile.Tile destinationTile, Action<List<Tile.Tile>> callback) {
-        GetInstance().StartCoroutine(GetInstance().PathFindCoroutine(startTile, destinationTile, callback));
+        var instance = GetInstance();
+
+        // NOTE : 이미 같은 조건으로 패스 파인딩이 진행중이라면 무시
+        if (instance.isExistSamePathFinder(startTile, destinationTile)) {
+            Debug.Log("path find ignored");
+            return;
+        }
+
+        instance.StartCoroutine(instance.PathFindCoroutine(startTile, destinationTile, callback));
     }
 }
 
@@ -63,6 +78,8 @@ public class PathFinder
             this.f = f;
         }
     }
+    public Tile.Tile StartTile { get; private set; }
+    public Tile.Tile DestinationTile { get; private set; }
     public bool IsFinish { get => isFinish; }
     private bool isFinish = false;
     public List<Tile.Tile> Path { get => path; }
@@ -83,6 +100,9 @@ public class PathFinder
 
     public void FindPath(Tile.Tile startTile, Tile.Tile destinationTile) {
         if (startTile == destinationTile || !startTile.IsMovable || !destinationTile.IsMovable) return;
+
+        StartTile = startTile;
+        DestinationTile = destinationTile;
 
         openList.Clear();
         closeList.Clear();
