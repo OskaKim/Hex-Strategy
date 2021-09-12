@@ -14,20 +14,25 @@ namespace Tile
         [SerializeField] public List<Tile> path;
 
         void Start() {
-            TileInputHandler.GetInstance().ClickEvent += TileTester_ClickEvent;
+            TileInputHandler.GetInstance().ClickOnceEvent += ClickOnce;
+            TileInputHandler.GetInstance().ClickContinuingEvent += ClickContinuing;
         }
 
         void OnDestroy() {
-            TileInputHandler.GetInstance().ClickEvent -= TileTester_ClickEvent;
+            TileInputHandler.GetInstance().ClickOnceEvent -= ClickOnce;
+            TileInputHandler.GetInstance().ClickContinuingEvent -= ClickContinuing;
         }
 
-        private void TileTester_ClickEvent(int button, Tile clickedTile) {
+        private void ClickOnce(int button, Tile clickedTile) {
             if (button == 0) findPathStart = clickedTile.Coordinates;
-            else if (button == 1) {
+        }
+        private void ClickContinuing(int button, Tile clickedTile) {
+            if (button == 1) {
                 findPathEnd = clickedTile.Coordinates;
                 FindPath();
             }
         }
+
         public void FindPath() {
 
             var startTile = TileHelper.GetTile(findPathStart);
