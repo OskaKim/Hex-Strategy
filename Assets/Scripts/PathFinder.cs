@@ -18,6 +18,9 @@ public class PathFinderManager : MonoBehaviour {
     
     private readonly List<PathFinder> workingPathFinders = new List<PathFinder>();
 
+    // NOTE : 유저의 패스 파인딩은 동시에 존재할 수 없기 때문에 하나만 존재
+    private readonly PathFinder playerPathFinder = new PathFinder();
+
     private PathFinder GetNewPathFinder() {
         PathFinder newPathFinder = new PathFinder();
         workingPathFinders.Add(newPathFinder);
@@ -34,14 +37,18 @@ public class PathFinderManager : MonoBehaviour {
             return x.StartTile == startTile && x.DestinationTile == destinationTile;
         });
     }
+    private bool isSamePlayerPathFinder(Tile.Tile startTile, Tile.Tile destinationTile) {
+        return playerPathFinder.StartTile == startTile && playerPathFinder.DestinationTile == destinationTile;
+    }
 
-    private IEnumerator PathFindCoroutine(Tile.Tile startTile, Tile.Tile destinationTile, Action<List<Tile.Tile>> callback) {
-        var pathFinder = GetNewPathFinder();
+    private IEnumerator PathFindCoroutine(Tile.Tile startTile, Tile.Tile destinationTile, Action<List<Tile.Tile>> callback, bool isPlayer) {
+        var pathFinder = isPlayer ? playerPathFinder : GetNewPathFinder();
+
         pathFinder.FindPath(startTile, destinationTile);
         while(true) {
             if (pathFinder.IsFinish) {
                 if (callback != null) callback(pathFinder.Path);
-                DeletePathFinder(pathFinder);
+                if (!isPlayer) DeletePathFinder(pathFinder);
                 yield break;
             }
 
@@ -58,8 +65,21 @@ public class PathFinderManager : MonoBehaviour {
             Debug.Log("path find ignored");
             return;
         }
+        
+        instance.StartCoroutine(instance.PathFindCoroutine(startTile, destinationTile, callback, false));
+    }
 
-        instance.StartCoroutine(instance.PathFindCoroutine(startTile, destinationTile, callback));
+    // NOTE : 플레이어의 입력에 따른 패스 파인딩 개시
+    public static void StartPlayerPathFinding(Tile.Tile startTile, Tile.Tile destinationTile, Action<List<Tile.Tile>> callback) {
+        var instance = GetInstance();
+
+        // NOTE : 이미 같은 조건으로 패스 파인딩이 진행중이라면 무시
+        if (instance.isSamePlayerPathFinder(startTile, destinationTile)) {
+            Debug.Log("player path find ignored");
+            return;
+        }
+
+        instance.StartCoroutine(instance.PathFindCoroutine(startTile, destinationTile, callback, true));
     }
 }
 
@@ -98,16 +118,21 @@ public class PathFinder
     // NOTE : 인접 패스 연산은 코스트가 높기 때문에 한 프레임에 해당 횟수만큼만 처리
     private readonly static int MaxNearPathLoopInOneCicle = 10;
 
-    public void FindPath(Tile.Tile startTile, Tile.Tile destinationTile) {
-        if (startTile == destinationTile || !startTile.IsMovable || !destinationTile.IsMovable) return;
-
-        StartTile = startTile;
-        DestinationTile = destinationTile;
-
+    private void Clear() {
+        isFinish = false;
+        path.Clear();
         openList.Clear();
         closeList.Clear();
         destinationNode = null;
         calculCount = 0;
+    }
+
+    public void FindPath(Tile.Tile startTile, Tile.Tile destinationTile) {
+        Clear();
+        StartTile = startTile;
+        DestinationTile = destinationTile;
+
+        if (startTile == destinationTile || !startTile.IsMovable || !destinationTile.IsMovable) return;
 
         var currentCloseNode = new Node(startTile, null, 0);
         this.destinationTile = destinationTile;
