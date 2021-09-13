@@ -21,7 +21,8 @@ namespace Tile
         // NOTE : 대륙타일 생성시 필요한 파라미터.
         [SerializeField] private int   numOfMaxContinentTiles = 1000;        // NOTE : 대륙타일 최대 사이즈. TODO : 맵 사이즈로부터 결정
         [SerializeField] private int   numOfLeastContinentTiles = 100;       // NOTE : 생성할 대륙타일의 최소 숫자. 이 숫자보다 적으면 추가 생성함. 대륙 타일의 최대 사이즈보다 커질 수 없음
-        [SerializeField] private float influenceOfContinent = 0.6f;          // NOTE : 대륙타일 사이즈 대비 영향력 지수(0 ~ 1). 첫 타일의 영향력은 타일 사이즈 x 영향력 지수로 계산됨.
+        [SerializeField, Range(0, 1)] private float influenceOfContinent = 0.6f;          // NOTE : 대륙타일 사이즈 대비 영향력 지수(0 ~ 1). 첫 타일의 영향력은 타일 사이즈 x 영향력 지수로 계산됨.
+        [SerializeField, Range(0, 1)] private float moutainRatioOfContinentTiles = 0.1f;  // NOTE : 대륙 중에서 산 타일의 비율(0 ~ 1).
 
         // NOTE : 작성된 대륙 타일리스트가 타입별로 배열에 할당됨. 생성되지 않은 대륙은 비어있음
         private List<Tile>[] allContinentTiles = new List<Tile>[TilePropertyInfo.ContinentNames.Length];
@@ -83,14 +84,7 @@ namespace Tile
                 CreateRandomContinent(firstContinentTileIndex);
             }
 
-            foreach (var tile in TileModel.tiles) {
-                if (allContinentTiles.Any(x => x.Contains(tile))) {
-                    tile.setupType(TerrainType.Field, 0);
-                    continue;
-                }
-
-                tile.setupType(TerrainType.Ocean, 0);
-            }
+            SetupTerrainType();
 
             //TileHelper.SetTilesColorToEnvironment();
             TileHelper.SetTilesColorToContinent();
@@ -100,6 +94,30 @@ namespace Tile
                 var currentContinentName = TilePropertyInfo.ContinentNames[i];
                 var currentContinent = allContinentTiles[i];
                 Debug.Log($"{currentContinentName} : {currentContinent.Count}");
+            }
+        }
+
+        private void SetupTerrainType() {
+
+            var randomSortedContinentTiles = allContinentTiles.SelectMany(x => x).OrderBy(g => Guid.NewGuid());
+            var numOfContinentTiles = randomSortedContinentTiles.Count();
+            var numOfMountainTiles = (int)(numOfContinentTiles * moutainRatioOfContinentTiles);
+            var mountainTiles = randomSortedContinentTiles
+                                .Take(numOfMountainTiles)
+                                .ToList();
+
+            foreach (var tile in TileModel.tiles) {
+                if (mountainTiles.Any(x => x == tile)) {
+                    tile.SetupTerrainType(TerrainType.Mountain);
+                    continue;
+                }
+
+                if (randomSortedContinentTiles.Any(x => x == tile)) {
+                    tile.SetupTerrainType(TerrainType.Field);
+                    continue;
+                }
+
+                tile.SetupTerrainType(TerrainType.Ocean);
             }
         }
 
