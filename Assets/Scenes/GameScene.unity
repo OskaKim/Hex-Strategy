@@ -264,6 +264,7 @@ MonoBehaviour:
   numOfMaxContinentTiles: 1000
   numOfLeastContinentTiles: 500
   influenceOfContinent: 1
+  moutainRatioOfContinentTiles: 0.1
 --- !u!4 &87678585
 Transform:
   m_ObjectHideFlags: 0
@@ -1867,6 +1868,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hexMesh: {fileID: 0}
+  material: {fileID: 0}
   meshCollider: {fileID: 1334256977}
 --- !u!64 &1334256977
 MeshCollider:

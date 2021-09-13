@@ -22,10 +22,11 @@ namespace Tile
             "gridCanvas",
             "cellLabelPrefab",
             "defaultColor",
+            "firstContinentTileIndexs",
             "numOfMaxContinentTiles",
             "numOfLeastContinentTiles",
             "influenceOfContinent",
-            "firstContinentTileIndexs"
+            "moutainRatioOfContinentTiles",
         };
 
         private void OnEnable()

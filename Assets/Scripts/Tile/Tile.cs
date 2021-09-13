@@ -17,6 +17,7 @@ namespace Tile
         public HexCoordinates Coordinates { private set; get; }
         public IndexPair IndexPair { private set; get; }
         public TerrainType TerrainType { private set; get; }
+        public FeatureType FeatureType { private set; get; }
         public int ContinentType { set => continentType = value; get => continentType; }
         private int continentType = -1;
         public bool IsMovable { get { return isMovable; } }
@@ -29,15 +30,13 @@ namespace Tile
             Coordinates = HexCoordinates.FromOffsetCoordinates(index.X, index.Y);
         }
 
-        public void setupType(TerrainType terrainType, int featureType)
-        {
+        public void SetupTerrainType(TerrainType terrainType) {
             TerrainType = terrainType;
             setupMoveCost(terrainType);
             int terrainTypeIndex = (int)terrainType;
 
             // NOTE : 리소스 로드
-            if(!tileResources[terrainTypeIndex])
-            {
+            if (!tileResources[terrainTypeIndex]) {
                 tileResources[terrainTypeIndex] = Resources.Load<GameObject>(TileResourceInfo.TileResourcesPath[terrainTypeIndex]);
             }
 
@@ -45,6 +44,11 @@ namespace Tile
             var tileResourceTransform = Instantiate(tileResources[terrainTypeIndex]).transform;
             tileResourceTransform.parent = resourceRoot;
             tileResourceTransform.localPosition = Vector3.zero;
+        }
+
+        public void SetupFeatureType(FeatureType featureType) {
+            FeatureType = featureType;
+
         }
 
         // TODO : 정의는 다른 클래스로 이동
