@@ -75,5 +75,9 @@ namespace Tile {
         public static void SetTilesColorToContinent() {
             TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetContinentColor(x.ContinentType));
         }
+
+        public static void SetTilesColorToClimate() {
+            TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetClimateColor(x.ClimateType));
+        }
     }
 }
