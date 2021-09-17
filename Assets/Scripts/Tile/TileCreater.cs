@@ -123,16 +123,17 @@ namespace Tile
             }
         }
 
+        // NOTE : 타일 인덱스로부터 기후를 계산
         private ClimateType GetClimateTypeFromIndexPair(IndexPair indexPair) {
-            int y = indexPair.Y;
+            var yPercentRatio = (indexPair.Y / (float)tileRange.Y) * 100.0f;
 
-            if (y <= 10 || 90 <= y) {
+            if (yPercentRatio <= 10 || 90 <= yPercentRatio) {
                 return ClimateType.Polar;
             }
-            else if (y <= 20 || 80 <= y) {
+            else if (yPercentRatio <= 20 || 80 <= yPercentRatio) {
                 return ClimateType.Subarctic;
             }
-            else if (y <= 40 || 60 <= y) {
+            else if (yPercentRatio <= 40 || 60 <= yPercentRatio) {
                 return ClimateType.Temperate;
             }
             else {
