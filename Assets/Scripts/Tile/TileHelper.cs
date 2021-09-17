@@ -70,14 +70,19 @@ namespace Tile {
         public static void SetTilesColorToEnvironment() {
             TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetEnvironmentColor(x.TerrainType));
             TileModel.hexMesh.MeshAlpha = TileColorDefinitions.GetEnvironmentAlpha();
+            ReDrawHexMesh();
         }
 
         public static void SetTilesColorToContinent() {
             TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetContinentColor(x.ContinentType));
+            TileModel.hexMesh.MeshAlpha = 1f;
+            ReDrawHexMesh();
         }
 
         public static void SetTilesColorToClimate() {
             TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetClimateColor(x.ClimateType));
+            TileModel.hexMesh.MeshAlpha = 1f;
+            ReDrawHexMesh();
         }
     }
 }
