@@ -48,4 +48,14 @@ namespace Tile {
         "오세아니아"
     };
     }
+
+    // NOTE : 기후.
+    [Serializable]
+    public enum ClimateType {
+        Polar,
+        Subarctic,
+        Temperate,
+        Tropical
+    }
+
 }
