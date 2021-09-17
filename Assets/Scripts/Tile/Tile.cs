@@ -20,6 +20,8 @@ namespace Tile
         public FeatureType FeatureType { private set; get; }
         public int ContinentType { set => continentType = value; get => continentType; }
         private int continentType = -1;
+        public int ClimateType { set => climateType = value; get => climateType; }
+        private int climateType = -1;
         public bool IsMovable { get { return isMovable; } }
         public int MoveCost { get { return moveCost; } }
         public int ContinentInfluence { get; set; }

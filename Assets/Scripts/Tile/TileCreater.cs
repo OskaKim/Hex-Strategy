@@ -85,9 +85,11 @@ namespace Tile
             }
 
             SetupTerrainType();
-
+            SetupClimateType();
+            // TODO : UI에서 옵션으로 선택할 수 있도록 하기
             //TileHelper.SetTilesColorToEnvironment();
-            TileHelper.SetTilesColorToContinent();
+            //TileHelper.SetTilesColorToContinent();
+            TileHelper.SetTilesColorToClimate();
             TileHelper.ReDrawHexMesh();
 
             for(int i = 0; i < allContinentTiles.Length; ++i) {
@@ -119,6 +121,31 @@ namespace Tile
 
                 tile.SetupTerrainType(TerrainType.Ocean);
             }
+        }
+
+        // NOTE : 타일 인덱스로부터 기후를 계산
+        private ClimateType GetClimateTypeFromIndexPair(IndexPair indexPair) {
+            var yPercentRatio = (indexPair.Y / (float)tileRange.Y) * 100.0f;
+
+            if (yPercentRatio <= 10 || 90 <= yPercentRatio) {
+                return ClimateType.Polar;
+            }
+            else if (yPercentRatio <= 20 || 80 <= yPercentRatio) {
+                return ClimateType.Subarctic;
+            }
+            else if (yPercentRatio <= 40 || 60 <= yPercentRatio) {
+                return ClimateType.Temperate;
+            }
+            else {
+                return ClimateType.Tropical;
+            }
+        }
+
+        // NOTE : 기후 설정
+        private void SetupClimateType() {
+            TileModel.tiles.ForEach(x => {
+                x.ClimateType = (int)GetClimateTypeFromIndexPair(x.IndexPair);
+            });
         }
 
         private void CreateRandomContinent(IndexPair firstContinentTileIndex) {
