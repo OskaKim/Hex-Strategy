@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Linq;
 
 namespace Tile {
@@ -52,6 +53,10 @@ namespace Tile {
                GetTile(new HexCoordinates(x + 1,z - 1)),
                GetTile(new HexCoordinates(x + 1,z    )),
             }.Where(x => x != null).ToArray();
+        }
+
+        public static Tile[] GetNearTilesRandomSorted(Tile tile) {
+            return GetNearTiles(tile).OrderBy(g => Guid.NewGuid()).ToArray();
         }
 
         public static void ClearAllTiles() {

@@ -7,6 +7,7 @@ using System;
 
 namespace Tile
 {
+    // TODO : 최적화
     public class TileCreater : MonoBehaviour {
         #region singletone
         private static TileCreater instance;
@@ -18,46 +19,41 @@ namespace Tile
             return instance;
         }
         #endregion
-        [SerializeField] private Tile        tilePrefab;
-        [SerializeField] private IndexPair   tileRange = new IndexPair(75, 50);
-        [SerializeField] private Transform   tilesRoot;
-        [SerializeField] private HexMesh     hexMesh;
-        [SerializeField] private Canvas      gridCanvas;
-        [SerializeField] private Text        cellLabelPrefab;
-        [SerializeField] private Color       defaultColor = Color.white;
+        [SerializeField] private Tile tilePrefab;
+        [SerializeField] private IndexPair tileRange = new IndexPair(75, 50);
+        [SerializeField] private Transform tilesRoot;
+        [SerializeField] private HexMesh hexMesh;
+        [SerializeField] private Canvas gridCanvas;
+        [SerializeField] private Text cellLabelPrefab;
+        [SerializeField] private Color defaultColor = Color.white;
         [SerializeField] private IndexPair[] firstContinentTileIndexs;
 
         // NOTE : 대륙타일 생성시 필요한 파라미터.
-        [SerializeField] private int   numOfMaxContinentTiles = 1000;        // NOTE : 대륙타일 최대 사이즈. TODO : 맵 사이즈로부터 결정
-        [SerializeField] private int   numOfLeastContinentTiles = 100;       // NOTE : 생성할 대륙타일의 최소 숫자. 이 숫자보다 적으면 추가 생성함. 대륙 타일의 최대 사이즈보다 커질 수 없음
+        [SerializeField] private int numOfMaxContinentTiles = 1000;        // NOTE : 대륙타일 최대 사이즈. TODO : 맵 사이즈로부터 결정
+        [SerializeField] private int numOfLeastContinentTiles = 100;       // NOTE : 생성할 대륙타일의 최소 숫자. 이 숫자보다 적으면 추가 생성함. 대륙 타일의 최대 사이즈보다 커질 수 없음
         [SerializeField, Range(0, 1)] private float influenceOfContinent = 0.6f;          // NOTE : 대륙타일 사이즈 대비 영향력 지수(0 ~ 1). 첫 타일의 영향력은 타일 사이즈 x 영향력 지수로 계산됨.
         [SerializeField, Range(0, 1)] private float moutainRatioOfContinentTiles = 0.1f;  // NOTE : 대륙 중에서 산 타일의 비율(0 ~ 1).
 
         // NOTE : 작성된 대륙 타일리스트가 타입별로 배열에 할당됨. 생성되지 않은 대륙은 비어있음
         private List<Tile>[] allContinentTiles = new List<Tile>[TilePropertyInfo.ContinentNames.Length];
 
-        private struct ContinentTile
-        {
+        private struct ContinentTile {
             public Tile tile;
             public int influence;
             public bool isClosed;
-            public ContinentTile(Tile tile, int influence)
-            {
+            public ContinentTile(Tile tile, int influence) {
                 this.tile = tile;
                 this.influence = influence;
                 isClosed = false;
             }
         }
 
-        public void Create(IndexPair indexRange)
-        {
+        public void Create(IndexPair indexRange) {
             TileHelper.ClearAllTiles();
             TileHelper.maxIndex = new IndexPair(indexRange.X, indexRange.Y);
 
-            for (int y = 0; y < indexRange.Y; y++)
-            {
-                for (int x = 0; x < indexRange.X; x++)
-                {
+            for (int y = 0; y < indexRange.Y; y++) {
+                for (int x = 0; x < indexRange.X; x++) {
                     var tile = Instantiate(tilePrefab, tilesRoot);
                     // NOTE : 실제 위치 설정
                     var pos = tile.transform.localPosition = new Vector3(
@@ -85,7 +81,7 @@ namespace Tile
 
             // TODO : 타일 환경설정은 새로운 좌표계에 맞춰서 리팩토링
 
-            for(int i = 0; i < allContinentTiles.Length; ++i) {
+            for (int i = 0; i < allContinentTiles.Length; ++i) {
                 allContinentTiles[i] = new List<Tile>();
             }
 
@@ -95,8 +91,9 @@ namespace Tile
 
             SetupTerrainType();
             SetupClimateType();
+            SetupFeatureType();
 
-            for(int i = 0; i < allContinentTiles.Length; ++i) {
+            for (int i = 0; i < allContinentTiles.Length; ++i) {
                 var currentContinentName = TilePropertyInfo.ContinentNames[i];
                 var currentContinent = allContinentTiles[i];
                 Debug.Log($"{currentContinentName} : {currentContinent.Count}");
@@ -150,6 +147,57 @@ namespace Tile
             TileModel.tiles.ForEach(x => {
                 x.ClimateType = (int)GetClimateTypeFromIndexPair(x.IndexPair);
             });
+        }
+
+        private void SetupFeatureType() {
+            var randomSortedTiles = TileModel.tiles.OrderBy(g => Guid.NewGuid());
+
+            // TODO : 외부에서 설정 가능하도록
+            int jungleAreaCount = 1;
+            int desertAreaCount = 2;
+
+            foreach (var tile in randomSortedTiles) {
+                if (tile.FeatureType != FeatureType.None) continue;
+                if (tile.ClimateType == (int)(ClimateType.Polar)) {
+                    tile.SetupFeatureType(FeatureType.Ice);
+                    continue;
+                }
+
+                // TODO : 함수화
+                if (tile.ClimateType == (int)(ClimateType.Tropical)) {
+                    if (jungleAreaCount > 0) {
+                        --jungleAreaCount;
+                        int createCount = 10;
+                        CreateFeatureTypeArea(tile, FeatureType.Jungle, ref createCount);
+                        continue;
+                    }
+                }
+
+                // TODO : 함수화
+                if (tile.ClimateType == (int)(ClimateType.Subarctic) || tile.ClimateType == (int)(ClimateType.Temperate)) {
+                    if (desertAreaCount > 0) {
+                        --desertAreaCount;
+                        int createCount = 10;
+                        CreateFeatureTypeArea(tile, FeatureType.Desert, ref createCount);
+                        continue;
+                    }
+                }
+
+                tile.SetupFeatureType(FeatureType.Grass);
+            }
+        }
+
+        // NOTE : 지정된 카운트 만큼의 피쳐 타입의 영역을 생성
+        private void CreateFeatureTypeArea(Tile firstTile, FeatureType featureType, ref int createCount) {
+            if (createCount <= 0) return;
+            if (firstTile.FeatureType != FeatureType.None) return;
+
+            firstTile.SetupFeatureType(featureType);
+            --createCount;
+
+            foreach(var tile in TileHelper.GetNearTilesRandomSorted(firstTile)) {
+                CreateFeatureTypeArea(tile, featureType, ref createCount);
+            }
         }
 
         private void CreateRandomContinent(IndexPair firstContinentTileIndex) {

@@ -16,9 +16,11 @@ namespace Tile {
     // 지형 특성은 바뀔 수 있음. 중복의 특성은 가지지 않음.
     [Serializable]
     public enum FeatureType {
+        None = -1,
         Ice,
-        Woods,
-        Oasis,
+        Jungle,
+        Desert,
+        Grass,
         NumFeatureType
     }
 

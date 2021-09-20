@@ -17,7 +17,10 @@ namespace Tile
         public HexCoordinates Coordinates { private set; get; }
         public IndexPair IndexPair { private set; get; }
         public TerrainType TerrainType { private set; get; }
-        public FeatureType FeatureType { private set; get; }
+
+        // TODO : FeatureType, COntinentType, ClimateType 정리. 캐스팅이 최대한 없어질 수 있도록
+        public FeatureType FeatureType { get => featureType; }
+        private FeatureType featureType = FeatureType.None;
         public int ContinentType { set => continentType = value; get => continentType; }
         private int continentType = -1;
         public int ClimateType { set => climateType = value; get => climateType; }
@@ -49,8 +52,7 @@ namespace Tile
         }
 
         public void SetupFeatureType(FeatureType featureType) {
-            FeatureType = featureType;
-
+            this.featureType = featureType;
         }
 
         // TODO : 정의는 다른 클래스로 이동
