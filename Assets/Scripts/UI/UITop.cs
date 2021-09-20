@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UITopLens : MonoBehaviour
+public class UITop : MonoBehaviour
 {
     enum LensType {
         None,
@@ -31,5 +31,10 @@ public class UITopLens : MonoBehaviour
                 Debug.LogError("UI동작이 정의되지 않았습니다");
                 break;
         }
+    }
+    
+    public void OnClickButtonReCreateMap() {
+        var tileCreater = Tile.TileCreater.GetInstance();
+        tileCreater.ReCreateMap();
     }
 }

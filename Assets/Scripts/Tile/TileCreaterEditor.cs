@@ -39,7 +39,7 @@ namespace Tile
 
         public override void OnInspectorGUI()
         {
-            if (GUILayout.Button("create tile map")) tileCreater.CreateFromEditor();
+            if (GUILayout.Button("create tile map")) tileCreater.ReCreateMap();
             if (GUILayout.Button("delete all tiles")) TileHelper.ClearAllTiles();
             serializedObject.Update();
             foreach(var property in serializeProperty) {

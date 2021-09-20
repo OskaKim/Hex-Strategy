@@ -7,8 +7,17 @@ using System;
 
 namespace Tile
 {
-    public class TileCreater : MonoBehaviour
-    {
+    public class TileCreater : MonoBehaviour {
+        #region singletone
+        private static TileCreater instance;
+        public static TileCreater GetInstance() {
+            if (!instance) {
+                instance = GameObject.FindObjectOfType<TileCreater>();
+            }
+
+            return instance;
+        }
+        #endregion
         [SerializeField] private Tile        tilePrefab;
         [SerializeField] private IndexPair   tileRange = new IndexPair(75, 50);
         [SerializeField] private Transform   tilesRoot;
@@ -228,12 +237,10 @@ namespace Tile
             }
         }
 
-#if UNITY_EDITOR
-        public void CreateFromEditor()
+        public void ReCreateMap()
         {
             Create(tileRange);
         }
-#endif
 
         private void OnDisable()
         {
