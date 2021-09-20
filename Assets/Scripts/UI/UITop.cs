@@ -32,4 +32,9 @@ public class UITop : MonoBehaviour
                 break;
         }
     }
+    
+    public void OnClickButtonReCreateMap() {
+        var tileCreater = Tile.TileCreater.GetInstance();
+        tileCreater.ReCreateMap();
+    }
 }
