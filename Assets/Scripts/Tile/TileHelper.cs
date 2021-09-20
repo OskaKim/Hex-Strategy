@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Linq;
 
 namespace Tile {
@@ -54,6 +55,10 @@ namespace Tile {
             }.Where(x => x != null).ToArray();
         }
 
+        public static Tile[] GetNearTilesRandomSorted(Tile tile) {
+            return GetNearTiles(tile).OrderBy(g => Guid.NewGuid()).ToArray();
+        }
+
         public static void ClearAllTiles() {
             TileModel.ClearAll();
         }
@@ -69,19 +74,25 @@ namespace Tile {
 
         public static void SetTilesColorToEnvironment() {
             TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetEnvironmentColor(x.TerrainType));
-            TileModel.hexMesh.MeshAlpha = TileColorDefinitions.GetEnvironmentAlpha();
+            TileModel.hexMesh.MeshAlpha = 0.5f;
+            ReDrawHexMesh();
+        }
+
+        public static void SetTilesColorToFeatureType() {
+            TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetFeatureTypeColor(x.FeatureType));
+            TileModel.hexMesh.MeshAlpha = 0.5f;
             ReDrawHexMesh();
         }
 
         public static void SetTilesColorToContinent() {
             TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetContinentColor(x.ContinentType));
-            TileModel.hexMesh.MeshAlpha = 1f;
+            TileModel.hexMesh.MeshAlpha = 0.5f;
             ReDrawHexMesh();
         }
 
         public static void SetTilesColorToClimate() {
             TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetClimateColor(x.ClimateType));
-            TileModel.hexMesh.MeshAlpha = 1f;
+            TileModel.hexMesh.MeshAlpha = 0.5f;
             ReDrawHexMesh();
         }
     }

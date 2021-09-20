@@ -1753,6 +1753,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: "\uC9C0\uD615"
       m_Image: {fileID: 0}
+    - m_Text: "\uD0C0\uC77C\uD2B9\uC131"
+      m_Image: {fileID: 0}
     - m_Text: "\uB300\uB959"
       m_Image: {fileID: 0}
     - m_Text: "\uAE30\uD6C4"
