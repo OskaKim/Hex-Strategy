@@ -166,16 +166,24 @@ namespace Tile
             }
         }
 
-        private bool StartCreateFeatureTypeArea(Tile tile, FeatureType featureType) {
+        private bool CheckFeatureTypeAreaCondition(Tile tile, FeatureType featureType, ref List<ClimateType> climateConditions, ref List<TerrainType> terrainConditions) {
             // NOTE : 기후 조건 체크
-            List<ClimateType> climateConditions;
-            FeatureInfo.climateConditions.TryGetValue(featureType, out climateConditions);
-            if (!climateConditions.Any(x => (int)x == tile.ClimateType)) return false;
+            if (FeatureInfo.climateConditions.TryGetValue(featureType, out climateConditions)) {
+                if (!climateConditions.Any(x => (int)x == tile.ClimateType)) return false;
+            }
 
             // NOTE : 지형 조건 체크
-            List<TerrainType> terrainConditions;
-            FeatureInfo.terrainConditions.TryGetValue(featureType, out terrainConditions);
-            if (terrainConditions == null || !terrainConditions.Any(x => x == tile.TerrainType)) return false;
+            if (FeatureInfo.terrainConditions.TryGetValue(featureType, out terrainConditions)) {
+                if (!terrainConditions.Any(x => x == tile.TerrainType)) return false;
+            }
+
+            return true;
+        }
+
+        private bool StartCreateFeatureTypeArea(Tile tile, FeatureType featureType) {
+            List<ClimateType> climateConditions = null;
+            List<TerrainType> terrainConditions = null;
+            if (!CheckFeatureTypeAreaCondition(tile, featureType, ref climateConditions, ref terrainConditions)) return false;
 
             tile.SetupFeatureType(featureType);
             return true;
@@ -184,16 +192,9 @@ namespace Tile
         // NOTE : 타일 속성을 일정 크기의 지역으로써 생성
         private bool StartCreateFeatureTypeArea(Tile tile, FeatureType featureType, ref int remainAreaCount, int areaSize) {
             if (remainAreaCount <= 0) return false;
-
-            // NOTE : 기후 조건 체크
-            List<ClimateType> climateConditions;
-            FeatureInfo.climateConditions.TryGetValue(featureType, out climateConditions);
-            if (!climateConditions.Any(x => (int)x == tile.ClimateType)) return false;
-
-            // NOTE : 지형 조건 체크
-            List<TerrainType> terrainConditions;
-            FeatureInfo.terrainConditions.TryGetValue(featureType, out terrainConditions);
-            if (!terrainConditions.Any(x => x == tile.TerrainType)) return false;
+            List<ClimateType> climateConditions = null;
+            List<TerrainType> terrainConditions = null;
+            if (!CheckFeatureTypeAreaCondition(tile, featureType, ref climateConditions, ref terrainConditions)) return false;
 
             --remainAreaCount;
 
