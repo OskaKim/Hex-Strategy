@@ -7,6 +7,7 @@ public class UITop : MonoBehaviour
     enum LensType {
         None,
         Environment,
+        Feature,
         Continent,
         Climate
     }
@@ -20,6 +21,9 @@ public class UITop : MonoBehaviour
                 break;
             case LensType.Environment:
                 Tile.TileHelper.SetTilesColorToEnvironment();
+                break;
+            case LensType.Feature:
+                Tile.TileHelper.SetTilesColorToFeatureType();
                 break;
             case LensType.Continent:
                 Tile.TileHelper.SetTilesColorToContinent();
