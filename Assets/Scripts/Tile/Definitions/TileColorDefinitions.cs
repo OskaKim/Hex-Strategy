@@ -14,6 +14,7 @@ namespace Tile {
             new Color(0,0,0.8f,1),
         };
         public static Color GetFeatureTypeColor(FeatureType featureType) {
+            if (featureType == FeatureType.None) new Color(0, 0, 0, 1);
             return featureTypeColors[(int)featureType];
         }
 

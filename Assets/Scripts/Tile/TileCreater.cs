@@ -158,44 +158,72 @@ namespace Tile
 
             foreach (var tile in randomSortedTiles) {
                 if (tile.FeatureType != FeatureType.None) continue;
-                if (tile.ClimateType == (int)(ClimateType.Polar)) {
-                    tile.SetupFeatureType(FeatureType.Ice);
-                    continue;
-                }
-
-                if (tile.ClimateType == (int)(ClimateType.Tropical)) {
-                    if (StartCreateFeatureTypeArea(tile, FeatureType.Jungle, ref jungleAreaCount, 100)) continue;
-                }
-
-                if (tile.ClimateType == (int)(ClimateType.Subarctic) || tile.ClimateType == (int)(ClimateType.Temperate)) {
-                    if (StartCreateFeatureTypeArea(tile, FeatureType.Desert, ref desertAreaCount, 100)) continue;
-                }
+                if (StartCreateFeatureTypeArea(tile, FeatureType.Ice)) continue;
+                if (StartCreateFeatureTypeArea(tile, FeatureType.Jungle, ref jungleAreaCount, 30)) continue;
+                if (StartCreateFeatureTypeArea(tile, FeatureType.Desert, ref desertAreaCount, 50)) continue;
 
                 tile.SetupFeatureType(FeatureType.Grass);
             }
         }
 
-        // NOTE : 타일 속성을 일정 크기의 지역으로써 생성
-        private bool StartCreateFeatureTypeArea(Tile tile, FeatureType featureType, ref int areaCount, int areaSize) {
-            if (areaCount > 0) {
-                --areaCount;
-                CreateFeatureTypeArea(tile, featureType, ref areaSize);
-                return true;
-            }
+        private bool StartCreateFeatureTypeArea(Tile tile, FeatureType featureType) {
+            // NOTE : 기후 조건 체크
+            List<ClimateType> climateConditions;
+            FeatureInfo.climateConditions.TryGetValue(featureType, out climateConditions);
+            if (!climateConditions.Any(x => (int)x == tile.ClimateType)) return false;
 
-            return false;
+            // NOTE : 지형 조건 체크
+            List<TerrainType> terrainConditions;
+            FeatureInfo.terrainConditions.TryGetValue(featureType, out terrainConditions);
+            if (terrainConditions == null || !terrainConditions.Any(x => x == tile.TerrainType)) return false;
+
+            tile.SetupFeatureType(featureType);
+            return true;
+        }
+
+        // NOTE : 타일 속성을 일정 크기의 지역으로써 생성
+        private bool StartCreateFeatureTypeArea(Tile tile, FeatureType featureType, ref int remainAreaCount, int areaSize) {
+            if (remainAreaCount <= 0) return false;
+
+            // NOTE : 기후 조건 체크
+            List<ClimateType> climateConditions;
+            FeatureInfo.climateConditions.TryGetValue(featureType, out climateConditions);
+            if (!climateConditions.Any(x => (int)x == tile.ClimateType)) return false;
+
+            // NOTE : 지형 조건 체크
+            List<TerrainType> terrainConditions;
+            FeatureInfo.terrainConditions.TryGetValue(featureType, out terrainConditions);
+            if (!terrainConditions.Any(x => x == tile.TerrainType)) return false;
+
+            --remainAreaCount;
+
+            tile.SetupFeatureType(featureType);
+            --areaSize;
+
+            CreateFeatureTypeArea(tile, featureType, climateConditions, terrainConditions, ref areaSize);
+            return true;
         }
 
         // NOTE : 지정된 카운트 만큼의 피쳐 타입의 영역을 생성
-        private void CreateFeatureTypeArea(Tile currentTile, FeatureType featureType, ref int createCount) {
-            if (createCount <= 0) return;
-            if (currentTile.FeatureType != FeatureType.None) return;
+        private void CreateFeatureTypeArea(Tile currentTile, FeatureType featureType, List<ClimateType> climateConditions, List<TerrainType> terrainConditions, ref int remainCreateCount) {
+            if (remainCreateCount <= 0) return;
 
-            currentTile.SetupFeatureType(featureType);
-            --createCount;
+            var nearTiles = TileHelper.GetNearTilesRandomSorted(currentTile).Where(x => {
+                bool isUnSet = x.FeatureType == FeatureType.None;
+                bool isCorrectClimate = climateConditions.Any(condition => (int)condition == x.ClimateType);
+                bool isCorrectTerrain = terrainConditions.Any(condition => condition == x.TerrainType);
+                return isUnSet && isCorrectClimate && isCorrectTerrain;
+            }).ToArray();
 
-            foreach(var nearTile in TileHelper.GetNearTilesRandomSorted(currentTile)) {
-                CreateFeatureTypeArea(nearTile, featureType, ref createCount);
+            foreach (var nearTile in nearTiles) {
+                if (remainCreateCount <= 0) return;
+
+                nearTile.SetupFeatureType(featureType);
+                --remainCreateCount;
+            }
+
+            foreach (var nearTile in nearTiles) {
+                CreateFeatureTypeArea(nearTile, featureType, climateConditions, terrainConditions, ref remainCreateCount);
             }
         }
 

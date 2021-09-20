@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 namespace Tile {
     // NOTE : 기본지형.
@@ -22,6 +23,28 @@ namespace Tile {
         Desert,
         Grass,
         NumFeatureType
+    }
+    // NOTE : 기후.
+    [Serializable]
+    public enum ClimateType {
+        Polar,
+        Subarctic,
+        Temperate,
+        Tropical,
+        NumClimateType
+    }
+
+    struct FeatureInfo {
+        public static Dictionary<FeatureType, List<ClimateType>> climateConditions = new Dictionary<FeatureType, List<ClimateType>>() {
+            { FeatureType.Ice, new List<ClimateType>(){ ClimateType.Polar } },
+            { FeatureType.Jungle, new List<ClimateType>(){ ClimateType.Tropical } },
+            { FeatureType.Desert, new List<ClimateType>(){ ClimateType.Subarctic, ClimateType.Temperate } },
+        };
+        public static Dictionary<FeatureType, List<TerrainType>> terrainConditions = new Dictionary<FeatureType, List<TerrainType>>() {
+            { FeatureType.Jungle, new List<TerrainType>(){ TerrainType.Field } },
+            { FeatureType.Desert, new List<TerrainType>(){ TerrainType.Field } },
+            { FeatureType.Grass, new List<TerrainType>() { TerrainType.Field } }
+        };
     }
 
     [Serializable]
@@ -49,15 +72,6 @@ namespace Tile {
         "남아메리카",
         "오세아니아"
     };
-    }
-
-    // NOTE : 기후.
-    [Serializable]
-    public enum ClimateType {
-        Polar,
-        Subarctic,
-        Temperate,
-        Tropical
     }
 
 }
