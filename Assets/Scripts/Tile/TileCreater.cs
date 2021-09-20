@@ -86,11 +86,6 @@ namespace Tile
 
             SetupTerrainType();
             SetupClimateType();
-            // TODO : UI에서 옵션으로 선택할 수 있도록 하기
-            //TileHelper.SetTilesColorToEnvironment();
-            //TileHelper.SetTilesColorToContinent();
-            TileHelper.SetTilesColorToClimate();
-            TileHelper.ReDrawHexMesh();
 
             for(int i = 0; i < allContinentTiles.Length; ++i) {
                 var currentContinentName = TilePropertyInfo.ContinentNames[i];
