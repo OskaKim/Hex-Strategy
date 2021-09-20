@@ -13,6 +13,16 @@ namespace Tile {
             new Color(0,1,0,1),
             new Color(0,0,0.8f,1),
         };
+        public static Color GetFeatureTypeColor(FeatureType featureType) {
+            return featureTypeColors[(int)featureType];
+        }
+
+        private static Color[] featureTypeColors = {
+            new Color(0,0,0.5f,1),
+            new Color(0,1,0,1),
+            new Color(0.5f, 0.5f, 0, 1),
+            new Color(0, 0.5f, 0, 1)
+        };
         public static Color GetContinentColor(int continentType) {
             if (continentType == -1) return new Color(0, 0, 0, 1);
             return continentColor[continentType];

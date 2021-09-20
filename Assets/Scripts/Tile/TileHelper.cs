@@ -78,6 +78,12 @@ namespace Tile {
             ReDrawHexMesh();
         }
 
+        public static void SetTilesColorToFeatureType() {
+            TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetFeatureTypeColor(x.FeatureType));
+            TileModel.hexMesh.MeshAlpha = 1f;
+            ReDrawHexMesh();
+        }
+
         public static void SetTilesColorToContinent() {
             TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetContinentColor(x.ContinentType));
             TileModel.hexMesh.MeshAlpha = 1f;
