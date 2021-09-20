@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UITopLens : MonoBehaviour
+public class UITop : MonoBehaviour
 {
     enum LensType {
         None,
