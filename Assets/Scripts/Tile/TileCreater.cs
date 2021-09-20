@@ -153,8 +153,8 @@ namespace Tile
             var randomSortedTiles = TileModel.tiles.OrderBy(g => Guid.NewGuid());
 
             // TODO : 외부에서 설정 가능하도록
-            int jungleAreaCount = 1;
-            int desertAreaCount = 2;
+            int jungleAreaCount = 3;
+            int desertAreaCount = 3;
 
             foreach (var tile in randomSortedTiles) {
                 if (tile.FeatureType != FeatureType.None) continue;
@@ -163,40 +163,39 @@ namespace Tile
                     continue;
                 }
 
-                // TODO : 함수화
                 if (tile.ClimateType == (int)(ClimateType.Tropical)) {
-                    if (jungleAreaCount > 0) {
-                        --jungleAreaCount;
-                        int createCount = 10;
-                        CreateFeatureTypeArea(tile, FeatureType.Jungle, ref createCount);
-                        continue;
-                    }
+                    if (StartCreateFeatureTypeArea(tile, FeatureType.Jungle, ref jungleAreaCount, 100)) continue;
                 }
 
-                // TODO : 함수화
                 if (tile.ClimateType == (int)(ClimateType.Subarctic) || tile.ClimateType == (int)(ClimateType.Temperate)) {
-                    if (desertAreaCount > 0) {
-                        --desertAreaCount;
-                        int createCount = 10;
-                        CreateFeatureTypeArea(tile, FeatureType.Desert, ref createCount);
-                        continue;
-                    }
+                    if (StartCreateFeatureTypeArea(tile, FeatureType.Desert, ref desertAreaCount, 100)) continue;
                 }
 
                 tile.SetupFeatureType(FeatureType.Grass);
             }
         }
 
-        // NOTE : 지정된 카운트 만큼의 피쳐 타입의 영역을 생성
-        private void CreateFeatureTypeArea(Tile firstTile, FeatureType featureType, ref int createCount) {
-            if (createCount <= 0) return;
-            if (firstTile.FeatureType != FeatureType.None) return;
+        // NOTE : 타일 속성을 일정 크기의 지역으로써 생성
+        private bool StartCreateFeatureTypeArea(Tile tile, FeatureType featureType, ref int areaCount, int areaSize) {
+            if (areaCount > 0) {
+                --areaCount;
+                CreateFeatureTypeArea(tile, featureType, ref areaSize);
+                return true;
+            }
 
-            firstTile.SetupFeatureType(featureType);
+            return false;
+        }
+
+        // NOTE : 지정된 카운트 만큼의 피쳐 타입의 영역을 생성
+        private void CreateFeatureTypeArea(Tile currentTile, FeatureType featureType, ref int createCount) {
+            if (createCount <= 0) return;
+            if (currentTile.FeatureType != FeatureType.None) return;
+
+            currentTile.SetupFeatureType(featureType);
             --createCount;
 
-            foreach(var tile in TileHelper.GetNearTilesRandomSorted(firstTile)) {
-                CreateFeatureTypeArea(tile, featureType, ref createCount);
+            foreach(var nearTile in TileHelper.GetNearTilesRandomSorted(currentTile)) {
+                CreateFeatureTypeArea(nearTile, featureType, ref createCount);
             }
         }
 
