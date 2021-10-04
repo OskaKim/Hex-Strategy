@@ -19,6 +19,7 @@ namespace Tile
             "findPathStart",
             "findPathEnd",
             "path",
+            "pawnPrefab",
         };
 
         private void OnEnable()
