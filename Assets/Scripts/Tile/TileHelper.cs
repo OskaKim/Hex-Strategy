@@ -72,6 +72,12 @@ namespace Tile {
             TileModel.hexMesh.Triangulate();
         }
 
+        public static void InitHexMesh() {
+            if (!TileModel.hexMesh) return;
+            TileModel.hexMesh.MeshAlpha = 0.0f;
+            ReDrawHexMesh();
+        }
+
         public static void SetTilesColorToEnvironment() {
             TileModel.tiles.ForEach(x => x.color = TileColorDefinitions.GetEnvironmentColor(x.TerrainType));
             TileModel.hexMesh.MeshAlpha = 0.5f;

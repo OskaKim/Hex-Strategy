@@ -63,7 +63,6 @@ namespace Tile
 
                     // NOTE : ÁÂÇ¥°è ¼³Á¤
                     tile.Setup(new IndexPair(x, y));
-                    tile.color = defaultColor;
 
                     TileModel.tiles.Add(tile);
 
@@ -316,6 +315,7 @@ namespace Tile
         public void ReCreateMap()
         {
             Create(tileRange);
+            TileHelper.InitHexMesh();
         }
 
         private void OnDisable()
