@@ -42,7 +42,7 @@ public class UITop : MonoBehaviour
         tileCreater.ReCreateMap();
     }
 
-    public void OnToggleCreatePawnMode() {
-
+    public void OnToggleCreatePawnMode(bool value) {
+        PawnCreater.isCreateMode = value;
     }
 }
