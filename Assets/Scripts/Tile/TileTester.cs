@@ -27,10 +27,10 @@ namespace Tile {
         private void ClickOnce(int button, Tile clickedTile) {
             if (button == 0) {
                 var currentTilePawn = pawns.FirstOrDefault(x => x.CurrentTile == clickedTile);
-                if (currentTilePawn) {
+                if (currentTilePawn && !PawnCreater.isCreateMode) {
                     selectedPawn = currentTilePawn;
                 }
-                else {
+                else if(!currentTilePawn && PawnCreater.isCreateMode) {
                     var pawnInstance = Instantiate(pawnPrefab);
                     pawnInstance.name = $"pawn{pawns.Count}";
                     pawnInstance.CurrentTile = clickedTile;
@@ -38,7 +38,7 @@ namespace Tile {
                 }
             }
             else if (button == 1) {
-                if(selectedPawn) selectedPawn.DestinationTile = clickedTile;
+                if(selectedPawn && !PawnCreater.isCreateMode) selectedPawn.DestinationTile = clickedTile;
             }
         }
         private void ClickContinuing(int button, Tile clickedTile) {
