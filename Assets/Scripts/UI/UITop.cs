@@ -1,15 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class UITop : MonoBehaviour
 {
+    [SerializeField] TMP_Text turnNumberText;
+
     enum LensType {
         None,
         Environment,
         Feature,
         Continent,
         Climate
+    }
+
+    private void OnEnable() {
+        TurnManager.MoveForwardEvent += TurnMovedForward;
+    }
+    private void OnDisable() {
+        TurnManager.MoveForwardEvent -= TurnMovedForward;
+    }
+
+    private void TurnMovedForward(int currentTurn) {
+        turnNumberText.text = $"{currentTurn}ео";
     }
 
     public void OnSelectLensDropDownElement(int index) {
