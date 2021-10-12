@@ -5,6 +5,6 @@ using UnityEngine;
 public class UIButtomRight : MonoBehaviour
 {
     public void OnClickNextTurn() {
-        Debug.Log("OnCLickedNextTurn");
+        TurnManager.MoveForward();
     }
 }
