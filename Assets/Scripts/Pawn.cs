@@ -34,18 +34,22 @@ public class Pawn : MonoBehaviour {
             foreach (var path in path) {
                 path.color = new Color(strengthPerPath * ++cnt, 0, 0, 1);
             }
+
+            // TODO : UI에서 표현하도록
             TileHelper.ReDrawHexMesh();
         });
-        //var next = Path[0].transform.position;
-        //Observable.EveryUpdate()
-        //        .Subscribe(_ => {
-        //            transform.position = Vector3.MoveTowards(transform.position, next, 10 * Time.deltaTime);
+    }
 
-        //            if ((next - transform.position).sqrMagnitude < 1) {
-        //                Path.RemoveAt(0);
-        //                DeleteWhenNoPath();
-        //                next = Path[0].transform.position;
-        //            }
-        //        });
+    public void MoveForwardPath() {
+        if (path == null) return;
+        if (path.Count <= 1) {
+            path = null;
+            return;
+        }
+
+        currentTile = path[1];
+        var nextTilePosition = currentTile.transform.position;
+        transform.position = new Vector3(nextTilePosition.x, transform.position.y, nextTilePosition.z);
+        StartPath();
     }
 }

@@ -35,6 +35,7 @@ namespace Tile {
                     pawnInstance.name = $"pawn{pawns.Count}";
                     pawnInstance.CurrentTile = clickedTile;
                     pawns.Add(pawnInstance);
+                    PawnManager.GetInstance().AddPawn(pawnInstance, 0);
                 }
             }
             else if (button == 1) {
