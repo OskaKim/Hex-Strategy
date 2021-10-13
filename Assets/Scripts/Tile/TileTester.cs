@@ -13,13 +13,13 @@ namespace Tile {
         [SerializeField] public List<Tile> path;
         [SerializeField] public Pawn pawnPrefab;
         void Start() {
-            TileInputHandler.GetInstance().ClickOnceEvent += ClickOnce;
-            TileInputHandler.GetInstance().ClickContinuingEvent += ClickContinuing;
+            InputHandler.GetInstance().ClickOnceEvent += ClickOnce;
+            InputHandler.GetInstance().ClickContinuingEvent += ClickContinuing;
         }
 
         void OnDestroy() {
-            TileInputHandler.GetInstance().ClickOnceEvent -= ClickOnce;
-            TileInputHandler.GetInstance().ClickContinuingEvent -= ClickContinuing;
+            InputHandler.GetInstance().ClickOnceEvent -= ClickOnce;
+            InputHandler.GetInstance().ClickContinuingEvent -= ClickContinuing;
         }
 
         private List<Pawn> pawns = new List<Pawn>();
