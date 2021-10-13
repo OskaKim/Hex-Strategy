@@ -1,11 +1,13 @@
 using UnityEngine;
 using UniRx;
 using System;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 namespace Tile {
-    public class TileInputHandler : MonoBehaviour {
-        private static TileInputHandler instance;
-        public static TileInputHandler GetInstance() { return instance; }
+    public class InputHandler : MonoBehaviour {
+        private static InputHandler instance;
+        public static InputHandler GetInstance() { return instance; }
         public event Action<int, Tile> ClickOnceEvent;
         public event Action<int, Tile> ClickContinuingEvent;
 
@@ -40,11 +42,12 @@ namespace Tile {
         }
 
         private void HandleInput(int button, bool isOnce) {
-            Debug.Log($"clicked Button {button}");
             Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(inputRay, out hit)) {
-                TouchCell(button, hit.point, isOnce);
+                if (hit.collider.tag == "TileClickCollider" && !EventSystem.current.IsPointerOverGameObject()) {
+                    TouchCell(button, hit.point, isOnce);
+                }
             }
         }
 
