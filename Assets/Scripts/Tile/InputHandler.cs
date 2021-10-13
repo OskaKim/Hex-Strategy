@@ -45,17 +45,10 @@ namespace Tile {
             Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(inputRay, out hit)) {
-                if (hit.collider.tag == "Tile") {
+                if (hit.collider.tag == "TileClickCollider" && !EventSystem.current.IsPointerOverGameObject()) {
                     TouchCell(button, hit.point, isOnce);
                 }
             }
-        }
-        private bool IsClickDuplicated(Vector2 touchPos) {
-            var eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-            eventDataCurrentPosition.position = touchPos;
-            var results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
-            return results.Count > 0;
         }
 
         public void TouchCell(int button, Vector3 position, bool isOnce) {
