@@ -1,28 +1,30 @@
-using System.Collections;
 using System.Collections.Generic;
 using Tile;
-using UniRx;
 using UnityEngine;
 
+// TODO : 폰 타입에 따라 이 클래스를 계승하도록
 public class Pawn : MonoBehaviour {
+
+    private Tile.Tile currentTile;
+    private Tile.Tile destinationTile;
+    private List<Tile.Tile> path;
+
+    // NOTE : 현재 위치한 타일
     public Tile.Tile CurrentTile {
         get => currentTile;
         set {
             currentTile = value;
             transform.position = currentTile.transform.position + new Vector3(0, 10f);
-            Debug.Log(currentTile.transform.position);
         }
     }
+
+    // NOTE : 목적지 타일
     public Tile.Tile DestinationTile {
         set {
             destinationTile = value;
             StartPath();
         }
     }
-
-    private Tile.Tile currentTile;
-    private Tile.Tile destinationTile;
-    private List<Tile.Tile> path;
 
     public void StartPath() {
         PathFinderManager.StartPlayerPathFinding(CurrentTile, destinationTile, (outPath) => {
