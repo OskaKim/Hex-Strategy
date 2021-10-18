@@ -50,7 +50,7 @@ namespace Tile {
             var startTile = TileHelper.GetTile(findPathStart);
             var endTile = TileHelper.GetTile(findPathEnd);
 
-            PathFinderManager.StartPlayerPathFinding(startTile, endTile, (outPath) => {
+            PathFinderManager.StartPathFinding(true, startTile, endTile, (outPath) => {
                 path = outPath;
                 TileHelper.SetTilesColorToEnvironment();
 
