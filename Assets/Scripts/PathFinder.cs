@@ -49,7 +49,7 @@ public class PathFinderManager : MonoBehaviour {
         while(true) {
             if (pathFinder.IsFinish) {
                 if (callback != null) callback(pathFinder.Path);
-                FinishPathFindingEvent(isPlayer, pathFinder);
+                if (FinishPathFindingEvent != null) FinishPathFindingEvent(isPlayer, pathFinder);
                 if (!isPlayer) DeletePathFinder(pathFinder);
                 yield break;
             }
@@ -69,7 +69,7 @@ public class PathFinderManager : MonoBehaviour {
 
         var pathFinder = isPlayer ? instance.playerPathFinder : instance.GetNewPathFinder();
         instance.StartCoroutine(instance.PathFindCoroutine(startTile, destinationTile, callback, isPlayer, pathFinder));
-        instance.StartPathFindingEvent(isPlayer, pathFinder);
+        if(instance.StartPathFindingEvent != null) instance.StartPathFindingEvent(isPlayer, pathFinder);
     }
 }
 

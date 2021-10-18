@@ -18,17 +18,13 @@ namespace Tile {
 
         void OnEnable() {
             inputHandler = InputHandler.GetInstance();
-            pathFinder = PathFinderManager.GetInstance();
-
             inputHandler.ClickOnceEvent += OnClickOnce;
             inputHandler.ClickContinuingEvent += OnClickContinuing;
-            pathFinder.StartPathFindingEvent += OnStartPathFindingEvent;
         }
 
         void OnDisable() {
             inputHandler.ClickOnceEvent -= OnClickOnce;
             inputHandler.ClickContinuingEvent -= OnClickContinuing;
-            pathFinder.StartPathFindingEvent -= OnStartPathFindingEvent;
         }
 
         private List<Pawn> pawns = new List<Pawn>();
@@ -52,9 +48,6 @@ namespace Tile {
             }
         }
         private void OnClickContinuing(int button, Tile clickedTile) {
-        }
-
-        private void OnStartPathFindingEvent(bool isPlayer, PathFinder pathFinder) {
         }
 
         public void FindPath() {
