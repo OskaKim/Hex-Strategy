@@ -27,7 +27,7 @@ public class Pawn : MonoBehaviour {
     }
 
     public void StartPath() {
-        PathFinderManager.StartPlayerPathFinding(CurrentTile, destinationTile, (outPath) => {
+        PathFinderManager.StartPathFinding(true, CurrentTile, destinationTile, (outPath) => {
             path = outPath;
             TileHelper.SetTilesColorToEnvironment();
 

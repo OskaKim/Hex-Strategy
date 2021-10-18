@@ -13,9 +13,6 @@ namespace Tile {
 
         private void Awake() {
             instance = this;
-        }
-
-        void Start() {
             Observable.EveryUpdate()
                 .Where(_ => Input.GetMouseButtonDown(0))
                 .Subscribe(_ => {

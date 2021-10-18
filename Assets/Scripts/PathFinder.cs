@@ -8,14 +8,17 @@ using System;
 
 public class PathFinderManager : MonoBehaviour {
     private static PathFinderManager instance;
-    private static PathFinderManager GetInstance() {
+    public static PathFinderManager GetInstance() {
         if (!instance) {
             var gameObject = new GameObject("PathFinderManager");
             instance = gameObject.AddComponent<PathFinderManager>();
         }
         return instance;
     }
-    
+
+    public event Action<bool/*isPlayer*/, PathFinder> StartPathFindingEvent;
+    public event Action<bool/*isPlayer*/, PathFinder> FinishPathFindingEvent;
+
     private readonly List<PathFinder> workingPathFinders = new List<PathFinder>();
 
     // NOTE : 유저의 패스 파인딩은 동시에 존재할 수 없기 때문에 하나만 존재
@@ -32,22 +35,21 @@ public class PathFinderManager : MonoBehaviour {
         Debug.Log(workingPathFinders.Count);
     }
 
-    private bool isExistSamePathFinder(Tile.Tile startTile, Tile.Tile destinationTile) {
+    private bool isExistSamePathFinder(bool isPlayer, Tile.Tile startTile, Tile.Tile destinationTile) {
+        if (isPlayer) {
+            return playerPathFinder.StartTile == startTile && playerPathFinder.DestinationTile == destinationTile;
+        }
         return workingPathFinders.Any(x => {
             return x.StartTile == startTile && x.DestinationTile == destinationTile;
         });
     }
-    private bool isSamePlayerPathFinder(Tile.Tile startTile, Tile.Tile destinationTile) {
-        return playerPathFinder.StartTile == startTile && playerPathFinder.DestinationTile == destinationTile;
-    }
 
-    private IEnumerator PathFindCoroutine(Tile.Tile startTile, Tile.Tile destinationTile, Action<List<Tile.Tile>> callback, bool isPlayer) {
-        var pathFinder = isPlayer ? playerPathFinder : GetNewPathFinder();
-
+    private IEnumerator PathFindCoroutine(Tile.Tile startTile, Tile.Tile destinationTile, Action<List<Tile.Tile>> callback, bool isPlayer, PathFinder pathFinder) {
         pathFinder.FindPath(startTile, destinationTile);
         while(true) {
             if (pathFinder.IsFinish) {
                 if (callback != null) callback(pathFinder.Path);
+                if (FinishPathFindingEvent != null) FinishPathFindingEvent(isPlayer, pathFinder);
                 if (!isPlayer) DeletePathFinder(pathFinder);
                 yield break;
             }
@@ -55,31 +57,19 @@ public class PathFinderManager : MonoBehaviour {
             yield return null;
         }
     }
-
-    // NOTE : 새로운 패스 파인더로 패스 파인딩 개시
-    public static void StartPathFinding(Tile.Tile startTile, Tile.Tile destinationTile, Action<List<Tile.Tile>> callback) {
+    // NOTE : 패스 파인딩 개시
+    public static void StartPathFinding(bool isPlayer, Tile.Tile startTile, Tile.Tile destinationTile, Action<List<Tile.Tile>> callback) {
         var instance = GetInstance();
 
         // NOTE : 이미 같은 조건으로 패스 파인딩이 진행중이라면 무시
-        if (instance.isExistSamePathFinder(startTile, destinationTile)) {
-            Debug.Log("path find ignored");
-            return;
-        }
-        
-        instance.StartCoroutine(instance.PathFindCoroutine(startTile, destinationTile, callback, false));
-    }
-
-    // NOTE : 플레이어의 입력에 따른 패스 파인딩 개시
-    public static void StartPlayerPathFinding(Tile.Tile startTile, Tile.Tile destinationTile, Action<List<Tile.Tile>> callback) {
-        var instance = GetInstance();
-
-        // NOTE : 이미 같은 조건으로 패스 파인딩이 진행중이라면 무시
-        if (instance.isSamePlayerPathFinder(startTile, destinationTile)) {
-            Debug.Log("player path find ignored");
+        if (instance.isExistSamePathFinder(isPlayer, startTile, destinationTile)) {
+            Debug.Log("path finding ignored");
             return;
         }
 
-        instance.StartCoroutine(instance.PathFindCoroutine(startTile, destinationTile, callback, true));
+        var pathFinder = isPlayer ? instance.playerPathFinder : instance.GetNewPathFinder();
+        instance.StartCoroutine(instance.PathFindCoroutine(startTile, destinationTile, callback, isPlayer, pathFinder));
+        if(instance.StartPathFindingEvent != null) instance.StartPathFindingEvent(isPlayer, pathFinder);
     }
 }
 
