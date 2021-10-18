@@ -12,19 +12,28 @@ namespace Tile {
         [SerializeField] public HexCoordinates findPathEnd;
         [SerializeField] public List<Tile> path;
         [SerializeField] public Pawn pawnPrefab;
-        void Start() {
-            InputHandler.GetInstance().ClickOnceEvent += ClickOnce;
-            InputHandler.GetInstance().ClickContinuingEvent += ClickContinuing;
+
+        private InputHandler inputHandler;
+        private PathFinderManager pathFinder;
+
+        void OnEnable() {
+            inputHandler = InputHandler.GetInstance();
+            pathFinder = PathFinderManager.GetInstance();
+
+            inputHandler.ClickOnceEvent += OnClickOnce;
+            inputHandler.ClickContinuingEvent += OnClickContinuing;
+            pathFinder.StartPathFindingEvent += OnStartPathFindingEvent;
         }
 
-        void OnDestroy() {
-            InputHandler.GetInstance().ClickOnceEvent -= ClickOnce;
-            InputHandler.GetInstance().ClickContinuingEvent -= ClickContinuing;
+        void OnDisable() {
+            inputHandler.ClickOnceEvent -= OnClickOnce;
+            inputHandler.ClickContinuingEvent -= OnClickContinuing;
+            pathFinder.StartPathFindingEvent -= OnStartPathFindingEvent;
         }
 
         private List<Pawn> pawns = new List<Pawn>();
         private Pawn selectedPawn;
-        private void ClickOnce(int button, Tile clickedTile) {
+        private void OnClickOnce(int button, Tile clickedTile) {
             if (button == 0) {
                 var currentTilePawn = pawns.FirstOrDefault(x => x.CurrentTile == clickedTile);
                 if (currentTilePawn && !PawnCreater.isCreateMode) {
@@ -42,7 +51,10 @@ namespace Tile {
                 if(selectedPawn && !PawnCreater.isCreateMode) selectedPawn.DestinationTile = clickedTile;
             }
         }
-        private void ClickContinuing(int button, Tile clickedTile) {
+        private void OnClickContinuing(int button, Tile clickedTile) {
+        }
+
+        private void OnStartPathFindingEvent(bool isPlayer, PathFinder pathFinder) {
         }
 
         public void FindPath() {

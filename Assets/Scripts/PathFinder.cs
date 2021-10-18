@@ -8,7 +8,7 @@ using System;
 
 public class PathFinderManager : MonoBehaviour {
     private static PathFinderManager instance;
-    private static PathFinderManager GetInstance() {
+    public static PathFinderManager GetInstance() {
         if (!instance) {
             var gameObject = new GameObject("PathFinderManager");
             instance = gameObject.AddComponent<PathFinderManager>();
