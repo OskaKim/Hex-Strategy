@@ -36,21 +36,22 @@ public class Pawn : MonoBehaviour, IMovablePawn {
     public void StartPath() {
         PathFinderManager.StartPathFinding(true, CurrentTile, destinationTile, (outPath) => {
             path = outPath;
+            pathPerMovePoint.Clear();
 
             //// TODO : UI에서 표현하도록
             TileHelper.SetTilesColorToEnvironment();
 
             for (int i = 0, moveTick = movePoint; i < path.Count; ++i) {
-                var currentTile = path[i];
+                var currentPathTile = path[i];
 
                 if(moveTick <= 0 || i == path.Count - 1) {
                     moveTick = movePoint;
-                    pathPerMovePoint.Add(currentTile);
-                    currentTile.color = new Color(1, 0, 0, 1);
+                    pathPerMovePoint.Add(currentPathTile);
+                    currentPathTile.color = new Color(1, 0, 0, 1);
                     Debug.Log(pathPerMovePoint.Count);
                 }
 
-                moveTick -= currentTile.MoveCost;
+                moveTick -= currentPathTile.MoveCost;
             }
             
             TileHelper.ReDrawHexMesh();
@@ -58,13 +59,13 @@ public class Pawn : MonoBehaviour, IMovablePawn {
     }
 
     public void MoveForwardPath() {
-        if (path == null) return;
-        if (path.Count <= 1) {
-            path = null;
+        if (pathPerMovePoint == null) return;
+        if (pathPerMovePoint.Count == 0) {
+            pathPerMovePoint = null;
             return;
         }
 
-        currentTile = path[1];
+        currentTile = pathPerMovePoint[0];
         var nextTilePosition = currentTile.transform.position;
         transform.position = new Vector3(nextTilePosition.x, transform.position.y, nextTilePosition.z);
         StartPath();

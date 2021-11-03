@@ -119,6 +119,7 @@ public class PathFinder
 
     public void FindPath(Tile.Tile startTile, Tile.Tile destinationTile) {
         Clear();
+
         StartTile = startTile;
         DestinationTile = destinationTile;
 
