@@ -64,8 +64,6 @@ namespace Tile
                     moveCost = 1;
                     break;
                 case TerrainType.Mountain:
-                    moveCost = 2;
-                    break;
                 default:
                     moveCost = 0;
                     break;
