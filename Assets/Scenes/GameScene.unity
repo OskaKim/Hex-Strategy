@@ -323,22 +323,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilePrefab: {fileID: 6275563619957200588, guid: 02bebeb45bfc659468f3cd7ff0f57cbc, type: 3}
   tileRange:
-    x: 70
-    y: 50
+    x: 20
+    y: 20
   tilesRoot: {fileID: 127067643}
   hexMesh: {fileID: 1334256976}
   gridCanvas: {fileID: 2092240218}
   cellLabelPrefab: {fileID: 3602736031635390613, guid: 0460fc17f4e23e74384e3c7321880ece, type: 3}
   defaultColor: {r: 1, g: 1, b: 1, a: 0.39215687}
   firstContinentTileIndexs:
-  - x: 25
-    y: 35
-  - x: 30
-    y: 15
-  - x: 50
-    y: 41
-  numOfMaxContinentTiles: 1000
-  numOfLeastContinentTiles: 500
+  - x: 10
+    y: 11
+  numOfMaxContinentTiles: 200
+  numOfLeastContinentTiles: 100
   influenceOfContinent: 1
   moutainRatioOfContinentTiles: 0.1
 --- !u!4 &87678585
