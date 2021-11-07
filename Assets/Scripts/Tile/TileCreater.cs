@@ -92,7 +92,7 @@ namespace Tile
             SetupClimateType();
             SetupFeatureType();
 
-            TileData.SetTileTerrainData();
+            TileDataJsonConverter.SetTileTerrainData(TileModel.tiles);
 
             for (int i = 0; i < allContinentTiles.Length; ++i) {
                 var currentContinentName = TilePropertyInfo.ContinentNames[i];
